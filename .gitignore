@@ -1,0 +1,18 @@
+# Backend
+backend/node_modules/
+backend/.env
+
+# Frontend
+frontend/node_modules/
+frontend/build/
+frontend/.env
+
+# Uploads (user files)
+uploads/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

@@ -1,0 +1,155 @@
+{
+  "documents": {
+    "19823bb7-7092-4ba1-a141-82170760deee": {
+      "id": "19823bb7-7092-4ba1-a141-82170760deee",
+      "filename": "sample.txt",
+      "storedFilename": "1760777583099_sample.txt",
+      "size": 400,
+      "mimetype": "text/plain",
+      "path": "/uploads/1760777583099_sample.txt",
+      "createdAt": "2025-10-18T08:53:03.102Z",
+      "summary": "No text available to summarize.",
+      "clauses": [
+        {
+          "type": "1. Confidentiality",
+          "text": "1. Confidentiality: Parties agree to keep information confidential.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "2. Termination",
+          "text": "2. Termination: Either party may terminate with 30 days' notice.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "3. Governing Law",
+          "text": "3. Governing Law: This agreement is governed by the laws of California.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "Section 4",
+          "text": "Section 4: Payment Terms — Net 30.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "Clause 5",
+          "text": "Clause 5: Limitation of Liability — No indirect damages.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "Article 6",
+          "text": "Article 6: Dispute Resolution — Binding arbitration.",
+          "riskLevel": "medium",
+          "summary": ""
+        }
+      ]
+    },
+    "84e6ca55-99fd-44a8-9f49-a92a63ef60ed": {
+      "id": "84e6ca55-99fd-44a8-9f49-a92a63ef60ed",
+      "filename": "OOP_Concepts_Structured_Revision_Notes.pdf",
+      "storedFilename": "1760779220443_OOP_Concepts_Structured_Revision_Notes.pdf",
+      "size": 4245,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1760779220443_OOP_Concepts_Structured_Revision_Notes.pdf",
+      "createdAt": "2025-10-18T09:20:20.448Z",
+      "summary": "No text available to summarize.",
+      "clauses": []
+    },
+    "f1c0e4dc-e72a-4189-9c67-abe84aa764a4": {
+      "id": "f1c0e4dc-e72a-4189-9c67-abe84aa764a4",
+      "filename": "OOP_Concepts_Structured_Revision_Notes.pdf",
+      "storedFilename": "1760779248993_OOP_Concepts_Structured_Revision_Notes.pdf",
+      "size": 4245,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1760779248993_OOP_Concepts_Structured_Revision_Notes.pdf",
+      "createdAt": "2025-10-18T09:20:48.999Z",
+      "summary": "No text available to summarize.",
+      "clauses": []
+    },
+    "525c07ab-134c-466f-8cae-9f453e2f6d63": {
+      "id": "525c07ab-134c-466f-8cae-9f453e2f6d63",
+      "filename": "OOP_Concepts_Structured_Revision_Notes.pdf",
+      "storedFilename": "1760779251077_OOP_Concepts_Structured_Revision_Notes.pdf",
+      "size": 4245,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1760779251077_OOP_Concepts_Structured_Revision_Notes.pdf",
+      "createdAt": "2025-10-18T09:20:51.083Z",
+      "summary": "No text available to summarize.",
+      "clauses": []
+    },
+    "270863bd-0b10-4d3f-931a-4057fba7f4b2": {
+      "id": "270863bd-0b10-4d3f-931a-4057fba7f4b2",
+      "filename": "OOP_Concepts_Structured_Revision_Notes.pdf",
+      "storedFilename": "1760779298428_OOP_Concepts_Structured_Revision_Notes.pdf",
+      "size": 4245,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1760779298428_OOP_Concepts_Structured_Revision_Notes.pdf",
+      "createdAt": "2025-10-18T09:21:38.439Z",
+      "summary": "No text available to summarize.",
+      "clauses": []
+    },
+    "c3e7e639-7af0-45f3-8f26-09f0e55bb09d": {
+      "id": "c3e7e639-7af0-45f3-8f26-09f0e55bb09d",
+      "filename": "git-cheat-sheet-education.pdf",
+      "storedFilename": "1760779343443_git-cheat-sheet-education.pdf",
+      "size": 100194,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1760779343443_git-cheat-sheet-education.pdf",
+      "createdAt": "2025-10-18T09:22:23.458Z",
+      "summary": "No text available to summarize.",
+      "clauses": []
+    },
+    "e27c9dd3-cb0e-450f-a626-1abaee85e4b0": {
+      "id": "e27c9dd3-cb0e-450f-a626-1abaee85e4b0",
+      "filename": "sample.txt",
+      "storedFilename": "1760859046872_sample.txt",
+      "size": 400,
+      "mimetype": "text/plain",
+      "path": "/uploads/1760859046872_sample.txt",
+      "createdAt": "2025-10-19T07:30:46.875Z",
+      "summary": "Agreement Title: Master Services Agreement 1. Confidentiality: Parties agree to keep information confidential. 2.",
+      "clauses": [
+        {
+          "type": "1. Confidentiality",
+          "text": "1. Confidentiality: Parties agree to keep information confidential.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "2. Termination",
+          "text": "2. Termination: Either party may terminate with 30 days' notice.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "3. Governing Law",
+          "text": "3. Governing Law: This agreement is governed by the laws of California.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "Section 4",
+          "text": "Section 4: Payment Terms — Net 30.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "Clause 5",
+          "text": "Clause 5: Limitation of Liability — No indirect damages.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "Article 6",
+          "text": "Article 6: Dispute Resolution — Binding arbitration.",
+          "riskLevel": "medium",
+          "summary": ""
+        }
+      ]
+    }
+  }
+}
