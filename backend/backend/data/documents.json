@@ -150,6 +150,54 @@
           "summary": ""
         }
       ]
+    },
+    "b6bac653-d807-4d84-b0f2-76230b59ee23": {
+      "id": "b6bac653-d807-4d84-b0f2-76230b59ee23",
+      "filename": "sample.txt",
+      "storedFilename": "1760866238001_sample.txt",
+      "size": 388,
+      "mimetype": "text/plain",
+      "path": "/uploads/1760866238001_sample.txt",
+      "createdAt": "2025-10-19T09:30:38.009Z",
+      "summary": "Master Services Agreement (MSA) 1. Confidentiality: Parties agree to keep information confidential. 2.",
+      "clauses": [
+        {
+          "type": "1. Confidentiality",
+          "text": "1. Confidentiality: Parties agree to keep information confidential.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "2. Termination",
+          "text": "2. Termination: Either party may terminate with 30 days' notice.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "3. Governing Law",
+          "text": "3. Governing Law: This agreement is governed by the laws of California.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "Section 4",
+          "text": "Section 4: Payment Terms — Net 30.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "Clause 5",
+          "text": "Clause 5: Limitation of Liability — No indirect damages.",
+          "riskLevel": "medium",
+          "summary": ""
+        },
+        {
+          "type": "Article 6",
+          "text": "Article 6: Dispute Resolution — Binding arbitration.",
+          "riskLevel": "medium",
+          "summary": ""
+        }
+      ]
     }
   }
 }

@@ -32,10 +32,10 @@ function FileUpload({ onUploadStart, onUploadSuccess, onUploadError, isUploading
     setUploadProgress(0);
     
     const formData = new FormData();
-    formData.append('document', file);
+    formData.append('file', file);
     
     try {
-      const response = await axios.post('http://localhost:5000/api/upload', formData, {
+      const response = await axios.post('http://localhost:4000/api/documents/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         },
@@ -47,8 +47,12 @@ function FileUpload({ onUploadStart, onUploadSuccess, onUploadError, isUploading
       
       // For demo purposes, we'll use a timeout to simulate processing time
       setTimeout(() => {
-        onUploadSuccess(response.data.fileName);
-      }, 2000);
+        const fileIdentifier = response?.data?.filename 
+          || response?.data?.fileName 
+          || response?.data?.storedFilename 
+          || file.name;
+        onUploadSuccess(fileIdentifier);
+      }, 1000);
       
     } catch (error) {
       console.error('Upload error:', error);
