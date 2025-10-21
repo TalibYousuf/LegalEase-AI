@@ -37,7 +37,7 @@ function Home() {
   };
 
   return (
-  <div className="min-h-screen bg-black text-white">
+  <div className="min-h-screen bg-gray-900 text-white">
     <Header />
 
     {/* Hero Section */}
@@ -46,12 +46,12 @@ function Home() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           <div className="mb-6">
-            <svg className="w-16 h-16 mx-auto" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
+             <svg className="w-16 h-16 mx-auto" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+               <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#6d28d9" stroke="#8b5cf6" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+               <path d="M2 17L12 22L22 17" fill="#6d28d9" stroke="#8b5cf6" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+               <path d="M2 12L12 17L22 12" fill="#6d28d9" stroke="#8b5cf6" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+             </svg>
+           </div>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white">
             The #1 AI Agent<br />for customer service
           </h1>
@@ -73,7 +73,7 @@ function Home() {
     </section>
 
     {/* Company Logos */}
-    <section className="py-10 bg-black">
+    <section className="py-10 bg-gray-900">
       <div className="container mx-auto px-4">
         <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-8">
           <div className="text-gray-400 text-lg">Amplitude</div>
@@ -87,10 +87,10 @@ function Home() {
     </section>
 
     {/* Upload Section */}
-    <section id="upload" className="py-20 bg-black">
+    <section id="upload" className="py-20 bg-gray-900">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-gray-900 bg-opacity-40 rounded-lg shadow-xl p-8 border border-gray-800">
+          <div className="bg-gray-800 bg-opacity-80 rounded-lg shadow-xl p-8 border border-gray-700">
             <h2 className="text-2xl font-bold text-white mb-8 text-center">
               Upload Your Document
             </h2>

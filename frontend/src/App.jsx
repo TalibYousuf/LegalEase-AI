@@ -8,6 +8,13 @@ import Services from './pages/Services';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import Cookies from './pages/Cookies';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Dashboard from './pages/Dashboard';
+import Admin from './pages/Admin';
+import Summary from './pages/Summary';
+import Comparison from './pages/Comparison';
+import LoginCallback from './pages/LoginCallback';
 
 function App() {
   return (
@@ -21,6 +28,13 @@ function App() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/cookies" element={<Cookies />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/login/callback" element={<LoginCallback />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/summary" element={<Summary />} />
+        <Route path="/comparison" element={<Comparison />} />
       </Routes>
     </Router>
   );

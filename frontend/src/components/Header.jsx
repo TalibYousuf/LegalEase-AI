@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import LogoutButton from './LogoutButton';
 
 function Header() {
   const [scrolled, setScrolled] = useState(false);
@@ -63,12 +64,15 @@ function Header() {
                 </Link>
               </li>
               <li><Link to="/pricing" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">Pricing</Link></li>
+              <li><Link to="/about" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">About</Link></li>
             </ul>
           </nav>
           <div className="hidden md:flex items-center space-x-4">
             <Link to="/contact" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">Contact sales</Link>
-            <Link to="/signin" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">Sign in</Link>
-            <Link to="/demo" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">View demo</Link>
+            <Link to="/login" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">Login</Link>
+            <Link to="/signup" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">Sign up</Link>
+            <Link to="/dashboard" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">Dashboard</Link>
+            <LogoutButton className="text-sm font-medium" />
             <Link to="/trial" className="bg-white text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-md text-sm font-medium transition-colors">Start free trial</Link>
           </div>
           
@@ -100,9 +104,14 @@ function Header() {
           <Link to="/customers" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Customers</Link>
           <Link to="/resources" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Resources</Link>
           <Link to="/pricing" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Pricing</Link>
+          <Link to="/about" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">About</Link>
           <Link to="/contact" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Contact sales</Link>
-          <Link to="/signin" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Sign in</Link>
-          <Link to="/demo" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">View demo</Link>
+          <Link to="/login" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Login</Link>
+          <Link to="/signup" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Sign up</Link>
+          <Link to="/dashboard" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Dashboard</Link>
+          <div className="px-3 py-2">
+            <LogoutButton />
+          </div>
           <Link to="/trial" className="block bg-white text-gray-900 px-3 py-2 rounded-md">Start free trial</Link>
         </div>
       </div>
