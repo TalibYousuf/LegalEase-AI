@@ -14,6 +14,7 @@ import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import Summary from './pages/Summary';
 import Comparison from './pages/Comparison';
+import RiskAnalysis from './pages/RiskAnalysis';
 import LoginCallback from './pages/LoginCallback';
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/summary" element={<Summary />} />
         <Route path="/comparison" element={<Comparison />} />
+        <Route path="/risk-analysis" element={<RiskAnalysis />} />
       </Routes>
     </Router>
   );

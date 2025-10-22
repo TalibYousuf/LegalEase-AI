@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { listDocuments, uploadDocument } from '../services/api';
 
 function Dashboard() {
   // Mock user data
@@ -13,6 +14,40 @@ function Dashboard() {
     documentsAnalyzed: 18,
   };
 
+  // Live documents state
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const docs = await listDocuments();
+        setDocuments(docs);
+      } catch (e) {
+        console.error('Failed to load documents', e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const handleUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      await uploadDocument(file);
+      const docs = await listDocuments();
+      setDocuments(docs);
+    } catch (err) {
+      console.error('Upload failed', err);
+      alert(err?.message || 'Upload failed');
+    } finally {
+      setUploading(false);
+    }
+  };
   // Mock recent documents
   const recentDocuments = [
     { id: 1, title: 'Employment Contract', date: '2023-10-15', type: 'PDF', status: 'Analyzed' },
@@ -30,9 +65,10 @@ function Dashboard() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <h1 className="text-4xl font-bold">Dashboard</h1>
             <div className="mt-4 md:mt-0">
-              <button className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded mr-3">
-                Upload Document
-              </button>
+              <label className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded mr-3 cursor-pointer">
+                <input type="file" className="hidden" onChange={handleUpload} disabled={uploading} />
+                {uploading ? 'Uploading...' : 'Upload Document'}
+              </label>
               <button className="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded">
                 New Analysis
               </button>
@@ -49,13 +85,13 @@ function Dashboard() {
             
             <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
               <h2 className="text-lg font-semibold mb-1">Documents</h2>
-              <p className="text-2xl font-bold">{user.documentsUploaded}</p>
+              <p className="text-2xl font-bold">{documents.length}</p>
               <p className="text-gray-400 mt-1">Total Uploaded</p>
             </div>
             
             <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
               <h2 className="text-lg font-semibold mb-1">Analyses</h2>
-              <p className="text-2xl font-bold">{user.documentsAnalyzed}</p>
+              <p className="text-2xl font-bold">{documents.filter(d => (d.summary || '').length > 0).length}</p>
               <p className="text-gray-400 mt-1">Documents Analyzed</p>
             </div>
             
@@ -72,9 +108,7 @@ function Dashboard() {
           <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-8">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold">Recent Documents</h2>
-              <Link to="/documents" className="text-purple-400 hover:text-purple-300">
-                View All
-              </Link>
+              {/* Removed View All for now */}
             </div>
             
             <div className="overflow-x-auto">
@@ -89,22 +123,28 @@ function Dashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {recentDocuments.map(doc => (
+                  {documents.length === 0 && (
+                    <tr>
+                      <td className="py-3 pr-6" colSpan={5}>{loading ? 'Loading...' : 'No documents yet'}</td>
+                    </tr>
+                  )}
+                  {documents.map(doc => (
                     <tr key={doc.id} className="border-b border-gray-700">
-                      <td className="py-3 pr-6">{doc.title}</td>
-                      <td className="py-3 pr-6">{doc.date}</td>
-                      <td className="py-3 pr-6">{doc.type}</td>
+                      <td className="py-3 pr-6">{doc.filename}</td>
+                      <td className="py-3 pr-6">{new Date(doc.createdAt).toLocaleString()}</td>
+                      <td className="py-3 pr-6">{(doc.mimetype || '').toUpperCase() || (doc.filename.split('.').pop() || '').toUpperCase()}</td>
                       <td className="py-3 pr-6">
                         <span className={`px-2 py-1 rounded text-xs ${
-                          doc.status === 'Analyzed' ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
+                          doc.summary && doc.summary.length ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
                         }`}>
-                          {doc.status}
+                          {doc.summary && doc.summary.length ? 'Analyzed' : 'Uploaded'}
                         </span>
                       </td>
                       <td className="py-3">
                         <div className="flex space-x-2">
                           <Link className="text-purple-400 hover:text-purple-300" to={`/summary?docId=${doc.id}`}>Summary</Link>
                           <Link className="text-purple-400 hover:text-purple-300" to={`/comparison?docId=${doc.id}`}>Compare</Link>
+                          <Link className="text-red-400 hover:text-red-300" to={`/risk-analysis?docId=${doc.id}`}>Risk</Link>
                         </div>
                       </td>
                     </tr>
@@ -141,6 +181,14 @@ function Dashboard() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
                     </svg>
                     <span>Compare Documents</span>
+                  </div>
+                </Link>
+                <Link to="/risk-analysis" className="block bg-gray-700 hover:bg-gray-600 p-3 rounded-lg">
+                  <div className="flex items-center">
+                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    <span>Risk Analysis</span>
                   </div>
                 </Link>
               </div>

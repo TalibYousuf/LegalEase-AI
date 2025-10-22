@@ -59,3 +59,17 @@ export async function findSimilarClauses(text) {
   const res = await fetch(`${API_BASE}/documents/similar?text=${encodeURIComponent(text)}`);
   return res.ok ? res.json() : Promise.reject(await res.json());
 }
+
+export async function analyzeRisks(id) {
+  const res = await fetch(`${API_BASE}/documents/${id}/analyze-risks`, { method: 'POST' });
+  return res.ok ? res.json() : Promise.reject(await res.json());
+}
+
+export async function compareDocuments(docId1, docId2) {
+  const res = await fetch(`${API_BASE}/documents/compare`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ docId1, docId2 })
+  });
+  return res.ok ? res.json() : Promise.reject(await res.json());
+}

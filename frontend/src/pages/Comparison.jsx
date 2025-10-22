@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { listDocuments } from '../services/api';
+import { listDocuments, compareDocuments } from '../services/api';
 
 function Comparison() {
   const [loading, setLoading] = useState(false);
@@ -31,26 +31,27 @@ function Comparison() {
     })();
   }, [searchParams]);
   
-  const handleCompare = () => {
+  const handleCompare = async () => {
+    if (!selectedA || !selectedB) {
+      alert('Please select both documents to compare');
+      return;
+    }
+    
+    if (selectedA === selectedB) {
+      alert('Please select two different documents to compare');
+      return;
+    }
+    
     setLoading(true);
-    // Simulated compare result (backend integration can be added later)
-    setTimeout(() => {
-      setComparisonResult({
-        similarities: 78,
-        differences: 22,
-        addedClauses: 3,
-        removedClauses: 1,
-        modifiedClauses: 5,
-        keyChanges: [
-          { type: 'addition', section: '4.2', description: 'Added intellectual property clause' },
-          { type: 'removal', section: '2.1', description: 'Removed outdated payment terms' },
-          { type: 'modification', section: '5.3', description: 'Modified confidentiality period from 1 year to 2 years' },
-          { type: 'modification', section: '7.1', description: 'Changed dispute resolution from arbitration to mediation' },
-          { type: 'modification', section: '9.4', description: 'Updated termination notice period from 30 to 60 days' },
-        ]
-      });
+    try {
+      const result = await compareDocuments(selectedA, selectedB);
+      setComparisonResult(result);
+    } catch (err) {
+      console.error('Comparison failed', err);
+      alert(err?.message || 'Failed to compare documents');
+    } finally {
       setLoading(false);
-    }, 1200);
+    }
   };
 
   return (
@@ -149,56 +150,109 @@ function Comparison() {
                 <h2 className="text-xl font-semibold mb-4">Comparison Results</h2>
                 
                 {comparisonResult ? (
-                  <div>
-                    {/* Summary Stats */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                      <div className="bg-gray-700 p-4 rounded-lg text-center">
-                        <div className="text-2xl font-bold text-green-400">{comparisonResult.similarities}%</div>
-                        <div className="text-sm text-gray-300">Similar</div>
-                      </div>
-                      <div className="bg-gray-700 p-4 rounded-lg text-center">
-                        <div className="text-2xl font-bold text-red-400">{comparisonResult.differences}%</div>
-                        <div className="text-sm text-gray-300">Different</div>
-                      </div>
-                      <div className="bg-gray-700 p-4 rounded-lg text-center">
-                        <div className="text-2xl font-bold">{comparisonResult.addedClauses + comparisonResult.removedClauses}</div>
-                        <div className="text-sm text-gray-300">Added/Removed</div>
-                      </div>
-                      <div className="bg-gray-700 p-4 rounded-lg text-center">
-                        <div className="text-2xl font-bold">{comparisonResult.modifiedClauses}</div>
-                        <div className="text-sm text-gray-300">Modified</div>
-                      </div>
-                    </div>
-                    
-                    {/* Key Changes */}
-                    <h3 className="text-lg font-medium mb-3">Key Changes</h3>
-                    <div className="space-y-3">
-                      {comparisonResult.keyChanges.map((change, index) => (
-                        <div key={index} className="flex items-start p-3 rounded-lg bg-gray-700">
-                          <div className={`mr-3 mt-1 w-3 h-3 rounded-full flex-shrink-0 ${
-                            change.type === 'addition' ? 'bg-green-400' : 
-                            change.type === 'removal' ? 'bg-red-400' : 'bg-yellow-400'
-                          }`}></div>
-                          <div>
-                            <div className="font-medium">Section {change.section}</div>
-                            <div className="text-gray-300 text-sm">{change.description}</div>
-                          </div>
+                  <div className="space-y-6">
+                    {/* Document Info */}
+                    <div className="bg-gray-700 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold mb-2">Comparing Documents</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <span className="text-blue-400 font-medium">Document 1:</span>
+                          <p className="text-gray-300">{comparisonResult.doc1?.filename}</p>
                         </div>
-                      ))}
+                        <div>
+                          <span className="text-green-400 font-medium">Document 2:</span>
+                          <p className="text-gray-300">{comparisonResult.doc2?.filename}</p>
+                        </div>
+                      </div>
                     </div>
-                    
-                    {/* Action Buttons */}
-                    <div className="mt-6 flex flex-wrap gap-3">
-                      <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">
-                        View Full Comparison
-                      </button>
-                      <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">
-                        Export Report
-                      </button>
-                      <button className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded">
-                        Share Results
-                      </button>
-                    </div>
+
+                    {/* Summary */}
+                    {comparisonResult.comparison?.summary && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3">Summary</h3>
+                        <p className="text-gray-300 leading-relaxed">{comparisonResult.comparison.summary}</p>
+                      </div>
+                    )}
+
+                    {/* Key Differences */}
+                    {comparisonResult.comparison?.keyDifferences && comparisonResult.comparison.keyDifferences.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 text-red-400">🔍 Key Differences</h3>
+                        <ul className="space-y-2">
+                          {comparisonResult.comparison.keyDifferences.map((diff, index) => (
+                            <li key={index} className="bg-red-900 bg-opacity-30 border border-red-800 rounded p-3">
+                              <p className="text-red-200">{diff}</p>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Similar Clauses */}
+                    {comparisonResult.comparison?.similarClauses && comparisonResult.comparison.similarClauses.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 text-green-400">✅ Similar Clauses</h3>
+                        <ul className="space-y-2">
+                          {comparisonResult.comparison.similarClauses.map((clause, index) => (
+                            <li key={index} className="bg-green-900 bg-opacity-30 border border-green-800 rounded p-3">
+                              <p className="text-green-200">{clause}</p>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Unique to Document 1 */}
+                    {comparisonResult.comparison?.uniqueToDoc1 && comparisonResult.comparison.uniqueToDoc1.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 text-blue-400">📄 Unique to {comparisonResult.doc1?.filename}</h3>
+                        <ul className="space-y-2">
+                          {comparisonResult.comparison.uniqueToDoc1.map((clause, index) => (
+                            <li key={index} className="bg-blue-900 bg-opacity-30 border border-blue-800 rounded p-3">
+                              <p className="text-blue-200">{clause}</p>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Unique to Document 2 */}
+                    {comparisonResult.comparison?.uniqueToDoc2 && comparisonResult.comparison.uniqueToDoc2.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 text-purple-400">📄 Unique to {comparisonResult.doc2?.filename}</h3>
+                        <ul className="space-y-2">
+                          {comparisonResult.comparison.uniqueToDoc2.map((clause, index) => (
+                            <li key={index} className="bg-purple-900 bg-opacity-30 border border-purple-800 rounded p-3">
+                              <p className="text-purple-200">{clause}</p>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Risk Assessment */}
+                    {comparisonResult.comparison?.riskAssessment && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 text-yellow-400">⚠️ Risk Assessment</h3>
+                        <div className="bg-yellow-900 bg-opacity-30 border border-yellow-800 rounded p-4">
+                          <p className="text-yellow-200">{comparisonResult.comparison.riskAssessment}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Recommendations */}
+                    {comparisonResult.comparison?.recommendations && comparisonResult.comparison.recommendations.length > 0 && (
+                      <div>
+                        <h3 className="text-lg font-semibold mb-3 text-green-400">💡 Recommendations</h3>
+                        <ul className="space-y-2">
+                          {comparisonResult.comparison.recommendations.map((rec, index) => (
+                            <li key={index} className="bg-green-900 bg-opacity-30 border border-green-800 rounded p-3">
+                              <p className="text-green-200">{rec}</p>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-64 text-center">

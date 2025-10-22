@@ -137,7 +137,62 @@ function Summary() {
                 
                 {summary ? (
                   <div className="prose prose-invert max-w-none">
-                    <p className="whitespace-pre-line">{summary}</p>
+                    {typeof summary === 'string' ? (
+                      <p className="whitespace-pre-line">{summary}</p>
+                    ) : (
+                      <div className="space-y-6">
+                        {summary.executiveSummary && (
+                          <div>
+                            <h3 className="text-lg font-semibold mb-3 text-white">Executive Summary</h3>
+                            <p className="text-gray-300 leading-relaxed">{summary.executiveSummary}</p>
+                          </div>
+                        )}
+                        
+                        {summary.keyTerms && summary.keyTerms.length > 0 && (
+                          <div>
+                            <h3 className="text-lg font-semibold mb-3 text-white">Key Terms</h3>
+                            <ul className="list-disc pl-5 space-y-1">
+                              {summary.keyTerms.map((term, index) => (
+                                <li key={index} className="text-gray-300">{term}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
+                        {summary.obligations && summary.obligations.length > 0 && (
+                          <div>
+                            <h3 className="text-lg font-semibold mb-3 text-white">Key Obligations</h3>
+                            <ul className="list-disc pl-5 space-y-1">
+                              {summary.obligations.map((obligation, index) => (
+                                <li key={index} className="text-gray-300">{obligation}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
+                        {summary.risks && summary.risks.length > 0 && (
+                          <div>
+                            <h3 className="text-lg font-semibold mb-3 text-white">Risk Factors</h3>
+                            <ul className="list-disc pl-5 space-y-1">
+                              {summary.risks.map((risk, index) => (
+                                <li key={index} className="text-red-300">{risk}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
+                        {summary.recommendations && summary.recommendations.length > 0 && (
+                          <div>
+                            <h3 className="text-lg font-semibold mb-3 text-white">Recommendations</h3>
+                            <ul className="list-disc pl-5 space-y-1">
+                              {summary.recommendations.map((rec, index) => (
+                                <li key={index} className="text-blue-300">{rec}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-64 text-center">

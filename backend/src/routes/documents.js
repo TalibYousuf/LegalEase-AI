@@ -3,7 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { list, upload, getById, generateSummary, clauses, compareClause, summarizeClauses, searchClauses, similarClauses } from '../controllers/documentController.js';
+import { list, upload, getById, generateSummary, clauses, compareClause, summarizeClauses, searchClauses, similarClauses, analyzeRisks, compareDocuments } from '../controllers/documentController.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -59,5 +59,11 @@ router.get('/:id/search-clauses', searchClauses);
 
 // Find similar clauses across documents
 router.get('/similar', similarClauses);
+
+// Risk analysis for a document
+router.post('/:id/analyze-risks', analyzeRisks);
+
+// Compare two documents
+router.post('/compare', compareDocuments);
 
 export default router;
