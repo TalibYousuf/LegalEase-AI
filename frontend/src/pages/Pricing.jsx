@@ -1,23 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 function Pricing() {
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+  useEffect(() => {
+    const onStorage = () => setIsAuthenticated(!!localStorage.getItem('token'));
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
   const pricingPlans = [
     {
-      name: 'Basic',
-      price: '$29',
+      name: 'Free',
+      price: '$0',
       period: 'per month',
       features: [
-        'Up to 50 document analyses',
-        'Basic document summaries',
-        'Email support',
-        '1 user account'
+        'Up to 3 document uploads per day',
+        'Basic summaries',
+        'Access to dashboard',
       ],
-      buttonText: 'Get Started',
-      buttonLink: '/signup',
-      highlighted: false
+      buttonText: isAuthenticated ? 'Go to Dashboard' : 'Start Free',
+      buttonLink: isAuthenticated ? '/dashboard' : '/signup',
+      highlighted: true
     },
     {
       name: 'Professional',
@@ -32,7 +38,7 @@ function Pricing() {
       ],
       buttonText: 'Get Started',
       buttonLink: '/signup',
-      highlighted: true
+      highlighted: false
     },
     {
       name: 'Enterprise',
@@ -69,7 +75,7 @@ function Pricing() {
             <div 
               key={index} 
               className={`rounded-lg p-8 ${plan.highlighted 
-                ? 'bg-indigo-900 border-2 border-indigo-500 transform -translate-y-4' 
+                ? 'bg-indigo-900 border-2 border-indigo-500 transform -translate-y-2' 
                 : 'bg-gray-800 border border-gray-700'}`}
             >
               <div className="text-center">

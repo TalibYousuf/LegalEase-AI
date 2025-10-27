@@ -6,7 +6,8 @@ import { listDocuments, compareDocuments } from '../services/api';
 
 function Comparison() {
   const [loading, setLoading] = useState(false);
-  const [comparisonResult, setComparisonResult] = useState(null);
+  const [result, setResult] = useState(null);
+  const [error, setError] = useState('');
   const [documents, setDocuments] = useState([]);
   const [selectedA, setSelectedA] = useState('');
   const [selectedB, setSelectedB] = useState('');
@@ -33,26 +34,23 @@ function Comparison() {
   
   const handleCompare = async () => {
     if (!selectedA || !selectedB) {
-      alert('Please select both documents to compare');
+      setError('Please select two documents');
       return;
     }
-    
-    if (selectedA === selectedB) {
-      alert('Please select two different documents to compare');
-      return;
-    }
-    
     setLoading(true);
+    setError('');
     try {
-      const result = await compareDocuments(selectedA, selectedB);
-      setComparisonResult(result);
-    } catch (err) {
-      console.error('Comparison failed', err);
-      alert(err?.message || 'Failed to compare documents');
+      const resp = await compareDocuments(selectedA, selectedB);
+      setResult(resp);
+    } catch (e) {
+      console.error('Compare failed', e);
+      setError(e?.message || 'Failed to compare documents');
     } finally {
       setLoading(false);
     }
   };
+
+  const comparison = result?.comparison;
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -113,24 +111,6 @@ function Comparison() {
                     </select>
                   </div>
                   
-                  <div>
-                    <label className="block text-gray-300 mb-2">Highlight</label>
-                    <div className="space-y-2">
-                      <div className="flex items-center">
-                        <input type="checkbox" id="additions" className="mr-2" defaultChecked />
-                        <label htmlFor="additions">Additions</label>
-                      </div>
-                      <div className="flex items-center">
-                        <input type="checkbox" id="deletions" className="mr-2" defaultChecked />
-                        <label htmlFor="deletions">Deletions</label>
-                      </div>
-                      <div className="flex items-center">
-                        <input type="checkbox" id="modifications" className="mr-2" defaultChecked />
-                        <label htmlFor="modifications">Modifications</label>
-                      </div>
-                    </div>
-                  </div>
-                  
                   <button 
                     onClick={handleCompare}
                     className={`w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 ${
@@ -140,6 +120,7 @@ function Comparison() {
                   >
                     {loading ? 'Comparing...' : 'Compare Documents'}
                   </button>
+                  {error && <p className="text-red-300 text-sm">{error}</p>}
                 </div>
               </div>
             </div>
@@ -149,106 +130,37 @@ function Comparison() {
               <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 h-full">
                 <h2 className="text-xl font-semibold mb-4">Comparison Results</h2>
                 
-                {comparisonResult ? (
-                  <div className="space-y-6">
-                    {/* Document Info */}
-                    <div className="bg-gray-700 rounded-lg p-4">
-                      <h3 className="text-lg font-semibold mb-2">Comparing Documents</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <span className="text-blue-400 font-medium">Document 1:</span>
-                          <p className="text-gray-300">{comparisonResult.doc1?.filename}</p>
-                        </div>
-                        <div>
-                          <span className="text-green-400 font-medium">Document 2:</span>
-                          <p className="text-gray-300">{comparisonResult.doc2?.filename}</p>
-                        </div>
-                      </div>
+                {comparison ? (
+                  <div>
+                    <div className="mb-6">
+                      <div className="text-gray-300 text-sm">Comparing:</div>
+                      <div className="text-lg font-medium">{result.doc1?.filename} vs {result.doc2?.filename}</div>
                     </div>
-
                     {/* Summary */}
-                    {comparisonResult.comparison?.summary && (
-                      <div>
-                        <h3 className="text-lg font-semibold mb-3">Summary</h3>
-                        <p className="text-gray-300 leading-relaxed">{comparisonResult.comparison.summary}</p>
-                      </div>
-                    )}
-
+                    <div className="bg-gray-700 p-4 rounded-lg mb-6">
+                      <div className="font-semibold mb-2">Summary</div>
+                      <div className="text-gray-200 text-sm whitespace-pre-line">{comparison.summary}</div>
+                    </div>
                     {/* Key Differences */}
-                    {comparisonResult.comparison?.keyDifferences && comparisonResult.comparison.keyDifferences.length > 0 && (
-                      <div>
-                        <h3 className="text-lg font-semibold mb-3 text-red-400">🔍 Key Differences</h3>
-                        <ul className="space-y-2">
-                          {comparisonResult.comparison.keyDifferences.map((diff, index) => (
-                            <li key={index} className="bg-red-900 bg-opacity-30 border border-red-800 rounded p-3">
-                              <p className="text-red-200">{diff}</p>
-                            </li>
+                    {Array.isArray(comparison.keyDifferences) && comparison.keyDifferences.length > 0 && (
+                      <div className="mb-6">
+                        <h3 className="text-lg font-medium mb-3">Key Differences</h3>
+                        <div className="space-y-3">
+                          {comparison.keyDifferences.map((diff, idx) => (
+                            <div key={idx} className="p-3 rounded-lg bg-gray-700">
+                              <div className="text-gray-200 text-sm">{diff}</div>
+                            </div>
                           ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {/* Similar Clauses */}
-                    {comparisonResult.comparison?.similarClauses && comparisonResult.comparison.similarClauses.length > 0 && (
-                      <div>
-                        <h3 className="text-lg font-semibold mb-3 text-green-400">✅ Similar Clauses</h3>
-                        <ul className="space-y-2">
-                          {comparisonResult.comparison.similarClauses.map((clause, index) => (
-                            <li key={index} className="bg-green-900 bg-opacity-30 border border-green-800 rounded p-3">
-                              <p className="text-green-200">{clause}</p>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {/* Unique to Document 1 */}
-                    {comparisonResult.comparison?.uniqueToDoc1 && comparisonResult.comparison.uniqueToDoc1.length > 0 && (
-                      <div>
-                        <h3 className="text-lg font-semibold mb-3 text-blue-400">📄 Unique to {comparisonResult.doc1?.filename}</h3>
-                        <ul className="space-y-2">
-                          {comparisonResult.comparison.uniqueToDoc1.map((clause, index) => (
-                            <li key={index} className="bg-blue-900 bg-opacity-30 border border-blue-800 rounded p-3">
-                              <p className="text-blue-200">{clause}</p>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {/* Unique to Document 2 */}
-                    {comparisonResult.comparison?.uniqueToDoc2 && comparisonResult.comparison.uniqueToDoc2.length > 0 && (
-                      <div>
-                        <h3 className="text-lg font-semibold mb-3 text-purple-400">📄 Unique to {comparisonResult.doc2?.filename}</h3>
-                        <ul className="space-y-2">
-                          {comparisonResult.comparison.uniqueToDoc2.map((clause, index) => (
-                            <li key={index} className="bg-purple-900 bg-opacity-30 border border-purple-800 rounded p-3">
-                              <p className="text-purple-200">{clause}</p>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    {/* Risk Assessment */}
-                    {comparisonResult.comparison?.riskAssessment && (
-                      <div>
-                        <h3 className="text-lg font-semibold mb-3 text-yellow-400">⚠️ Risk Assessment</h3>
-                        <div className="bg-yellow-900 bg-opacity-30 border border-yellow-800 rounded p-4">
-                          <p className="text-yellow-200">{comparisonResult.comparison.riskAssessment}</p>
                         </div>
                       </div>
                     )}
-
                     {/* Recommendations */}
-                    {comparisonResult.comparison?.recommendations && comparisonResult.comparison.recommendations.length > 0 && (
-                      <div>
-                        <h3 className="text-lg font-semibold mb-3 text-green-400">💡 Recommendations</h3>
-                        <ul className="space-y-2">
-                          {comparisonResult.comparison.recommendations.map((rec, index) => (
-                            <li key={index} className="bg-green-900 bg-opacity-30 border border-green-800 rounded p-3">
-                              <p className="text-green-200">{rec}</p>
-                            </li>
+                    {Array.isArray(comparison.recommendations) && comparison.recommendations.length > 0 && (
+                      <div className="mb-6">
+                        <h3 className="text-lg font-medium mb-3">Recommendations</h3>
+                        <ul className="list-disc list-inside text-gray-300">
+                          {comparison.recommendations.map((rec, idx) => (
+                            <li key={idx}>{rec}</li>
                           ))}
                         </ul>
                       </div>

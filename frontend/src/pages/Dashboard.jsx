@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { listDocuments, uploadDocument } from '../services/api';
 
 function Dashboard() {
-  // Mock user data
-  const user = {
-    name: 'John Doe',
-    email: 'john@example.com',
-    plan: 'Premium',
-    documentsUploaded: 24,
-    documentsAnalyzed: 18,
-  };
-
-  // Live documents state
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const token = localStorage.getItem('token');
+  const userInfo = useMemo(() => {
+    try {
+      if (!token) return null;
+      // JWT payload is the middle part
+      const payload = JSON.parse(atob(token.split('.')[1] || ''));
+      return { name: payload.name, email: payload.email };
+    } catch {
+      return null;
+    }
+  }, [token]);
 
   useEffect(() => {
     (async () => {
@@ -33,6 +34,25 @@ function Dashboard() {
     })();
   }, []);
 
+  const todayUploadCount = useMemo(() => {
+    const today = new Date();
+    return documents.filter((d) => {
+      const dt = new Date(d.createdAt);
+      return dt.getFullYear() === today.getFullYear() && dt.getMonth() === today.getMonth() && dt.getDate() === today.getDate();
+    }).length;
+  }, [documents]);
+  const freeDailyLimit = 3;
+  const remainingToday = Math.max(0, freeDailyLimit - todayUploadCount);
+  const usagePct = Math.min(100, Math.round((todayUploadCount / freeDailyLimit) * 100));
+
+  // Helper to detect analyzed documents across string/object summary shapes
+  const isAnalyzed = (doc) => {
+    const s = doc?.summary;
+    if (!s) return false;
+    if (typeof s === 'string') return s.length > 0;
+    if (typeof s === 'object') return Object.keys(s).length > 0;
+    return false;
+  };
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -48,13 +68,6 @@ function Dashboard() {
       setUploading(false);
     }
   };
-  // Mock recent documents
-  const recentDocuments = [
-    { id: 1, title: 'Employment Contract', date: '2023-10-15', type: 'PDF', status: 'Analyzed' },
-    { id: 2, title: 'NDA with Client X', date: '2023-10-10', type: 'DOCX', status: 'Analyzed' },
-    { id: 3, title: 'Service Agreement', date: '2023-10-05', type: 'PDF', status: 'Uploaded' },
-    { id: 4, title: 'Lease Agreement', date: '2023-09-28', type: 'PDF', status: 'Analyzed' },
-  ];
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -66,10 +79,10 @@ function Dashboard() {
             <h1 className="text-4xl font-bold">Dashboard</h1>
             <div className="mt-4 md:mt-0">
               <label className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded mr-3 cursor-pointer">
-                <input type="file" className="hidden" onChange={handleUpload} disabled={uploading} />
-                {uploading ? 'Uploading...' : 'Upload Document'}
+                <input type="file" className="hidden" onChange={handleUpload} disabled={uploading || remainingToday === 0} />
+                {uploading ? 'Uploading...' : remainingToday === 0 ? 'Daily Limit Reached' : 'Upload Document'}
               </label>
-              <button className="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded">
+              <button className="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded" disabled>
                 New Analysis
               </button>
             </div>
@@ -79,8 +92,8 @@ function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
               <h2 className="text-lg font-semibold mb-1">Welcome back</h2>
-              <p className="text-2xl font-bold">{user.name}</p>
-              <p className="text-gray-400 mt-1">{user.plan} Plan</p>
+              <p className="text-2xl font-bold">{userInfo?.name || 'User'}</p>
+              <p className="text-gray-400 mt-1">Free Plan</p>
             </div>
             
             <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
@@ -91,24 +104,29 @@ function Dashboard() {
             
             <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
               <h2 className="text-lg font-semibold mb-1">Analyses</h2>
-              <p className="text-2xl font-bold">{documents.filter(d => (d.summary || '').length > 0).length}</p>
+              <p className="text-2xl font-bold">{documents.filter(isAnalyzed).length}</p>
               <p className="text-gray-400 mt-1">Documents Analyzed</p>
             </div>
             
             <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-              <h2 className="text-lg font-semibold mb-1">Usage</h2>
+              <h2 className="text-lg font-semibold mb-1">Daily Uploads</h2>
               <div className="w-full bg-gray-700 rounded-full h-2.5 mt-3 mb-2">
-                <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: '75%' }}></div>
+                <div className="bg-purple-600 h-2.5 rounded-full" style={{ width: `${usagePct}%` }}></div>
               </div>
-              <p className="text-gray-400 text-sm">75% of monthly limit</p>
+              <p className="text-gray-400 text-sm">{todayUploadCount}/{freeDailyLimit} used today</p>
             </div>
           </div>
+
+          {remainingToday === 0 && (
+            <div className="bg-yellow-900 border border-yellow-700 text-yellow-100 rounded p-4 mb-6">
+              Daily limit reached for Free plan. Come back tomorrow or upgrade.
+            </div>
+          )}
           
           {/* Recent Documents */}
           <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 mb-8">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold">Recent Documents</h2>
-              {/* Removed View All for now */}
             </div>
             
             <div className="overflow-x-auto">
@@ -134,17 +152,14 @@ function Dashboard() {
                       <td className="py-3 pr-6">{new Date(doc.createdAt).toLocaleString()}</td>
                       <td className="py-3 pr-6">{(doc.mimetype || '').toUpperCase() || (doc.filename.split('.').pop() || '').toUpperCase()}</td>
                       <td className="py-3 pr-6">
-                        <span className={`px-2 py-1 rounded text-xs ${
-                          doc.summary && doc.summary.length ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
-                        }`}>
-                          {doc.summary && doc.summary.length ? 'Analyzed' : 'Uploaded'}
+                        <span className={`px-2 py-1 rounded text-xs ${isAnalyzed(doc) ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'}`}>
+                          {isAnalyzed(doc) ? 'Analyzed' : 'Uploaded'}
                         </span>
                       </td>
                       <td className="py-3">
                         <div className="flex space-x-2">
                           <Link className="text-purple-400 hover:text-purple-300" to={`/summary?docId=${doc.id}`}>Summary</Link>
                           <Link className="text-purple-400 hover:text-purple-300" to={`/comparison?docId=${doc.id}`}>Compare</Link>
-                          <Link className="text-red-400 hover:text-red-300" to={`/risk-analysis?docId=${doc.id}`}>Risk</Link>
                         </div>
                       </td>
                     </tr>
@@ -154,19 +169,11 @@ function Dashboard() {
             </div>
           </div>
           
-          {/* Quick Actions */}
+          {/* Account Status */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
               <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
               <div className="space-y-3">
-                <Link to="/upload" className="block bg-gray-700 hover:bg-gray-600 p-3 rounded-lg">
-                  <div className="flex items-center">
-                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                    </svg>
-                    <span>Upload New Document</span>
-                  </div>
-                </Link>
                 <Link to="/summary" className="block bg-gray-700 hover:bg-gray-600 p-3 rounded-lg">
                   <div className="flex items-center">
                     <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -183,35 +190,6 @@ function Dashboard() {
                     <span>Compare Documents</span>
                   </div>
                 </Link>
-                <Link to="/risk-analysis" className="block bg-gray-700 hover:bg-gray-600 p-3 rounded-lg">
-                  <div className="flex items-center">
-                    <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                    </svg>
-                    <span>Risk Analysis</span>
-                  </div>
-                </Link>
-              </div>
-            </div>
-            
-            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-              <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
-              <div className="space-y-4">
-                <div className="border-b border-gray-700 pb-3">
-                  <p className="font-medium">Document Uploaded</p>
-                  <p className="text-gray-400 text-sm">Service Agreement.pdf</p>
-                  <p className="text-gray-400 text-xs mt-1">Today, 10:30 AM</p>
-                </div>
-                <div className="border-b border-gray-700 pb-3">
-                  <p className="font-medium">Summary Generated</p>
-                  <p className="text-gray-400 text-sm">NDA with Client X.docx</p>
-                  <p className="text-gray-400 text-xs mt-1">Yesterday, 2:15 PM</p>
-                </div>
-                <div>
-                  <p className="font-medium">Documents Compared</p>
-                  <p className="text-gray-400 text-sm">Contract v1.0 and Contract v1.1</p>
-                  <p className="text-gray-400 text-xs mt-1">Oct 15, 2023</p>
-                </div>
               </div>
             </div>
             
@@ -220,22 +198,23 @@ function Dashboard() {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-400">Plan:</span>
-                  <span className="font-medium">{user.plan}</span>
+                  <span className="font-medium">Free</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Renewal Date:</span>
-                  <span className="font-medium">Nov 15, 2023</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Documents Remaining:</span>
-                  <span className="font-medium">25/100</span>
+                  <span className="text-gray-400">Documents Remaining Today:</span>
+                  <span className="font-medium">{remainingToday}/{freeDailyLimit}</span>
                 </div>
                 <div className="mt-4">
-                  <Link to="/account" className="text-purple-400 hover:text-purple-300 text-sm">
-                    Manage Account
+                  <Link to="/pricing" className="text-purple-400 hover:text-purple-300 text-sm">
+                    Upgrade Plan
                   </Link>
                 </div>
               </div>
+            </div>
+
+            <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
+              <h2 className="text-xl font-semibold mb-4">Tips</h2>
+              <p className="text-gray-300">Upload documents to see real-time insights here. Your activity feed will populate as you work with your documents.</p>
             </div>
           </div>
         </div>

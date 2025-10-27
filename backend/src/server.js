@@ -1,17 +1,19 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';//for logging http requests
 import path from 'path';
-import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { connectMongo } from './utils/db.js';
 
 // Resolve __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config();
+// dotenv is already loaded via import 'dotenv/config'
+connectMongo();
 
 const app = express();
 const PORT = process.env.PORT || 4000;

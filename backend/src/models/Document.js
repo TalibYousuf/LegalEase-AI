@@ -1,5 +1,5 @@
 export default class Document {
-  constructor({ id, filename, storedFilename, size, mimetype, path, createdAt, summary }) {
+  constructor({ id, filename, storedFilename, size, mimetype, path, createdAt, summary, ownerId }) {
     this.id = id;
     this.filename = filename;
     this.storedFilename = storedFilename;
@@ -8,5 +8,6 @@ export default class Document {
     this.path = path;
     this.createdAt = createdAt || new Date().toISOString();
     this.summary = summary || '';
+    this.ownerId = ownerId || null;
   }
 }

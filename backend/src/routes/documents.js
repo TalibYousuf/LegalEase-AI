@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { list, upload, getById, generateSummary, clauses, compareClause, summarizeClauses, searchClauses, similarClauses, analyzeRisks, compareDocuments } from '../controllers/documentController.js';
+import { requireAuth } from '../middleware/auth.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,39 +32,37 @@ const storage = multer.diskStorage({
 const uploadMiddleware = multer({ storage });
 
 // List documents
-router.get('/', list);
-
+router.get('/', requireAuth, list);
 // Upload document
-router.post('/upload', uploadMiddleware.single('file'), upload);
-
+router.post('/upload', requireAuth, uploadMiddleware.single('file'), upload);
 // Ensure specific routes precede dynamic :id matches
 router.get('/similar', similarClauses);
 
 // Get document by ID
-router.get('/:id', getById);
+router.get('/:id', requireAuth, getById);
 
 // Generate summary
-router.post('/:id/summary', generateSummary);
+router.post('/:id/summary', requireAuth, generateSummary);
 
 // Extract clauses (AI + fallback)
-router.post('/:id/extract-clauses', clauses);
+router.post('/:id/extract-clauses', requireAuth, clauses);
 
 // Compare clause against a standard
-router.post('/:id/compare-clause', compareClause);
+router.post('/:id/compare-clause', requireAuth, compareClause);
 
 // Summarize all clauses for a document
-router.post('/:id/summarize-clauses', summarizeClauses);
+router.post('/:id/summarize-clauses', requireAuth, summarizeClauses);
 
 // Search clauses in a document
-router.get('/:id/search-clauses', searchClauses);
+router.get('/:id/search-clauses', requireAuth, searchClauses);
 
 // Find similar clauses across documents
 router.get('/similar', similarClauses);
 
 // Risk analysis for a document
-router.post('/:id/analyze-risks', analyzeRisks);
+router.post('/:id/analyze-risks', requireAuth, analyzeRisks);
 
 // Compare two documents
-router.post('/compare', compareDocuments);
+router.post('/compare', requireAuth, compareDocuments);
 
 export default router;

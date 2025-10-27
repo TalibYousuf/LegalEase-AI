@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import { listDocuments, uploadDocument, generateSummary } from '../services/api';
 
 function Summary() {
-  const [summary, setSummary] = useState('');
+  const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [selectedId, setSelectedId] = useState('');
@@ -33,11 +33,9 @@ function Summary() {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    setSummary('');
     try {
       const doc = await uploadDocument(file);
-      const docs = await listDocuments();
-      setDocuments(docs);
+      setDocuments((prev) => [doc, ...prev]);
       setSelectedId(doc.id);
     } catch (err) {
       console.error('Upload failed', err);
@@ -55,13 +53,101 @@ function Summary() {
     setLoading(true);
     try {
       const res = await generateSummary(selectedId);
-      setSummary(res.summary || '');
+      setSummary(res.summary || null);
     } catch (err) {
       console.error('Summary generation failed', err);
-      alert(err?.message || 'Failed to generate summary');
+      if (err?.error === 'openai_token_exhausted' || err?.message?.includes('token finished')) {
+        alert('Error from OpenAI as token finished. Please check your API key or usage limits.');
+      } else {
+        alert(err?.message || 'Failed to generate summary');
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  const renderSummary = () => {
+    if (!summary) {
+      return (
+        <div className="flex flex-col items-center justify-center h-64 text-center">
+          <svg className="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+          </svg>
+          <p className="text-gray-400">Upload or select a document, then click "Generate Summary"</p>
+        </div>
+      );
+    }
+    if (typeof summary === 'string') {
+      return (
+        <div className="prose prose-invert max-w-none">
+          <p className="whitespace-pre-line">{summary}</p>
+        </div>
+      );
+    }
+
+    // Structured summary object
+    const {
+      executiveSummary,
+      keyTerms = [],
+      obligations = [],
+      risks = [],
+      recommendations = []
+    } = summary || {};
+
+    return (
+      <div className="space-y-6">
+        {executiveSummary && (
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Executive Summary</h3>
+            <p className="text-gray-300 whitespace-pre-line">{executiveSummary}</p>
+          </div>
+        )}
+
+        {Array.isArray(keyTerms) && keyTerms.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Key Terms</h3>
+            <ul className="list-disc pl-5 space-y-1 text-gray-300">
+              {keyTerms.map((item, idx) => (
+                <li key={idx}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {Array.isArray(obligations) && obligations.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Obligations</h3>
+            <ul className="list-disc pl-5 space-y-1 text-gray-300">
+              {obligations.map((item, idx) => (
+                <li key={idx}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {Array.isArray(risks) && risks.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Risks</h3>
+            <ul className="list-disc pl-5 space-y-1 text-gray-300">
+              {risks.map((item, idx) => (
+                <li key={idx}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {Array.isArray(recommendations) && recommendations.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Recommendations</h3>
+            <ul className="list-disc pl-5 space-y-1 text-gray-300">
+              {recommendations.map((item, idx) => (
+                <li key={idx}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -93,7 +179,7 @@ function Summary() {
                   </div>
 
                   <div>
-                    <label className="block text-gray-300 mb-2">Upload New Document (PDF, DOCX)</label>
+                    <label className="block text-gray-300 mb-2">Upload New Document (PDF, DOCX, TXT)</label>
                     <input
                       type="file"
                       onChange={handleUpload}
@@ -134,74 +220,7 @@ function Summary() {
             <div className="lg:col-span-2">
               <div className="bg-gray-800 rounded-lg p-6 border border-gray-700 h-full">
                 <h2 className="text-xl font-semibold mb-4">Document Summary</h2>
-                
-                {summary ? (
-                  <div className="prose prose-invert max-w-none">
-                    {typeof summary === 'string' ? (
-                      <p className="whitespace-pre-line">{summary}</p>
-                    ) : (
-                      <div className="space-y-6">
-                        {summary.executiveSummary && (
-                          <div>
-                            <h3 className="text-lg font-semibold mb-3 text-white">Executive Summary</h3>
-                            <p className="text-gray-300 leading-relaxed">{summary.executiveSummary}</p>
-                          </div>
-                        )}
-                        
-                        {summary.keyTerms && summary.keyTerms.length > 0 && (
-                          <div>
-                            <h3 className="text-lg font-semibold mb-3 text-white">Key Terms</h3>
-                            <ul className="list-disc pl-5 space-y-1">
-                              {summary.keyTerms.map((term, index) => (
-                                <li key={index} className="text-gray-300">{term}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                        
-                        {summary.obligations && summary.obligations.length > 0 && (
-                          <div>
-                            <h3 className="text-lg font-semibold mb-3 text-white">Key Obligations</h3>
-                            <ul className="list-disc pl-5 space-y-1">
-                              {summary.obligations.map((obligation, index) => (
-                                <li key={index} className="text-gray-300">{obligation}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                        
-                        {summary.risks && summary.risks.length > 0 && (
-                          <div>
-                            <h3 className="text-lg font-semibold mb-3 text-white">Risk Factors</h3>
-                            <ul className="list-disc pl-5 space-y-1">
-                              {summary.risks.map((risk, index) => (
-                                <li key={index} className="text-red-300">{risk}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                        
-                        {summary.recommendations && summary.recommendations.length > 0 && (
-                          <div>
-                            <h3 className="text-lg font-semibold mb-3 text-white">Recommendations</h3>
-                            <ul className="list-disc pl-5 space-y-1">
-                              {summary.recommendations.map((rec, index) => (
-                                <li key={index} className="text-blue-300">{rec}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-64 text-center">
-                    <svg className="w-16 h-16 text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    <p className="text-gray-400">Upload or select a document, then click "Generate Summary"</p>
-                  </div>
-                )}
+                {renderSummary()}
               </div>
             </div>
           </div>

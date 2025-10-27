@@ -238,6 +238,73 @@
       "path": "/uploads/1761122107374_TALIB_YOUSUF.pdf",
       "createdAt": "2025-10-22T08:35:07.383Z",
       "summary": "No text available to summarize."
+    },
+    "c80989f9-17b9-43d1-a734-8ed927e2b9ee": {
+      "id": "c80989f9-17b9-43d1-a734-8ed927e2b9ee",
+      "filename": "sample.txt",
+      "storedFilename": "1761130579856_sample.txt",
+      "size": 388,
+      "mimetype": "text/plain",
+      "path": "/uploads/1761130579856_sample.txt",
+      "createdAt": "2025-10-22T10:56:19.869Z",
+      "summary": {
+        "executiveSummary": "Master Services Agreement (MSA) 1. Confidentiality: Parties agree to keep information confidential. 2. Termination: Either party may terminate with 30 days' notice. 3.",
+        "keyTerms": [],
+        "obligations": [],
+        "risks": [],
+        "recommendations": [
+          "Review this document with legal counsel for complete analysis."
+        ]
+      }
+    },
+    "34fce8b7-09b5-4152-a015-8b153da32e02": {
+      "id": "34fce8b7-09b5-4152-a015-8b153da32e02",
+      "filename": "Untitled document.pdf",
+      "storedFilename": "1761472725646_Untitled_document.pdf",
+      "size": 38629,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1761472725646_Untitled_document.pdf",
+      "createdAt": "2025-10-26T09:58:45.653Z",
+      "summary": {
+        "executiveSummary": "No text available to summarize.",
+        "keyTerms": [],
+        "obligations": [],
+        "risks": [],
+        "recommendations": [
+          "Review this document with legal counsel for complete analysis."
+        ]
+      },
+      "ownerId": "110487075961772178303"
+    },
+    "1d2566e5-e016-4547-8d9f-a4b0d2aa6acc": {
+      "id": "1d2566e5-e016-4547-8d9f-a4b0d2aa6acc",
+      "filename": "sample.txt",
+      "storedFilename": "1761474746882_sample.txt",
+      "size": 388,
+      "mimetype": "text/plain",
+      "path": "/uploads/1761474746882_sample.txt",
+      "createdAt": "2025-10-26T10:32:26.887Z",
+      "summary": "Master Services Agreement (MSA) 1. Confidentiality: Parties agree to keep information confidential. 2.",
+      "ownerId": "110487075961772178303"
+    },
+    "ab014d44-f721-4a92-b45e-5319910193fb": {
+      "id": "ab014d44-f721-4a92-b45e-5319910193fb",
+      "filename": "sample.txt",
+      "storedFilename": "1761474758486_sample.txt",
+      "size": 388,
+      "mimetype": "text/plain",
+      "path": "/uploads/1761474758486_sample.txt",
+      "createdAt": "2025-10-26T10:32:38.491Z",
+      "summary": {
+        "executiveSummary": "Master Services Agreement (MSA) 1. Confidentiality: Parties agree to keep information confidential. 2. Termination: Either party may terminate with 30 days' notice. 3.",
+        "keyTerms": [],
+        "obligations": [],
+        "risks": [],
+        "recommendations": [
+          "Review this document with legal counsel for complete analysis."
+        ]
+      },
+      "ownerId": "110487075961772178303"
     }
   }
 }

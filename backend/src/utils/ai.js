@@ -69,6 +69,13 @@ ${text.substring(0, 8000)}`; // Limit text to avoid token limits
     }
   } catch (err) {
     console.warn('OpenAI extract error:', err?.message || err);
+    // Check for token exhaustion errors
+    if (err?.message?.includes('rate_limit') || 
+        err?.message?.includes('token') || 
+        err?.message?.includes('capacity') ||
+        err?.message?.includes('quota')) {
+      throw new Error('Error from OpenAI as token finished');
+    }
     return null;
   }
 }
@@ -92,6 +99,13 @@ export async function compareClauseAI(clauseText, standardText) {
     try { return JSON.parse(content); } catch { return null; }
   } catch (err) {
     console.warn('OpenAI compare error:', err?.message || err);
+    // Check for token exhaustion errors
+    if (err?.message?.includes('rate_limit') || 
+        err?.message?.includes('token') || 
+        err?.message?.includes('capacity') ||
+        err?.message?.includes('quota')) {
+      throw new Error('Error from OpenAI as token finished');
+    }
     return null;
   }
 }
@@ -143,6 +157,13 @@ ${clauseText}`;
     }
   } catch (err) {
     console.warn('OpenAI summarize error:', err?.message || err);
+    // Check for token exhaustion errors
+    if (err?.message?.includes('rate_limit') || 
+        err?.message?.includes('token') || 
+        err?.message?.includes('capacity') ||
+        err?.message?.includes('quota')) {
+      throw new Error('Error from OpenAI as token finished');
+    }
     return null;
   }
 }
@@ -185,6 +206,13 @@ ${text.substring(0, 12000)}`; // Limit text to avoid token limits
     }
   } catch (err) {
     console.warn('OpenAI document summary error:', err?.message || err);
+    // Check for token exhaustion errors
+    if (err?.message?.includes('rate_limit') || 
+        err?.message?.includes('token') || 
+        err?.message?.includes('capacity') ||
+        err?.message?.includes('quota')) {
+      throw new Error('Error from OpenAI as token finished');
+    }
     return null;
   }
 }

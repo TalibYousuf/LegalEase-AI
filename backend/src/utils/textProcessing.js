@@ -29,10 +29,21 @@ export async function readDocumentText(filePath) {
 
 export function summarizeText(text, maxSentences = 3) {
   if (!text) return 'No text available to summarize.';
-  const sentences = text
+  const rawSentences = text
     .replace(/\s+/g, ' ')
     .split(/(?<=[.!?])\s+/)
     .filter(Boolean);
+  // Merge orphaned numbered sentences like "3." with the following sentence
+  const sentences = [];
+  for (let i = 0; i < rawSentences.length; i++) {
+    const s = rawSentences[i];
+    if (/^\d+\.$/.test(s) && i + 1 < rawSentences.length) {
+      sentences.push(`${s} ${rawSentences[i + 1]}`);
+      i++; // skip the next since we merged it
+    } else {
+      sentences.push(s);
+    }
+  }
   return sentences.slice(0, maxSentences).join(' ');
 }
 

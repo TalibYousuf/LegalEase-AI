@@ -14,13 +14,14 @@ import Dashboard from './pages/Dashboard';
 import Admin from './pages/Admin';
 import Summary from './pages/Summary';
 import Comparison from './pages/Comparison';
-import RiskAnalysis from './pages/RiskAnalysis';
 import LoginCallback from './pages/LoginCallback';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/pricing" element={<Pricing />} />
@@ -32,11 +33,28 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/login/callback" element={<LoginCallback />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/summary" element={<Summary />} />
-        <Route path="/comparison" element={<Comparison />} />
-        <Route path="/risk-analysis" element={<RiskAnalysis />} />
+        
+        {/* Protected routes - require authentication */}
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin" element={
+          <ProtectedRoute>
+            <Admin />
+          </ProtectedRoute>
+        } />
+        <Route path="/summary" element={
+          <ProtectedRoute>
+            <Summary />
+          </ProtectedRoute>
+        } />
+        <Route path="/comparison" element={
+          <ProtectedRoute>
+            <Comparison />
+          </ProtectedRoute>
+        } />
       </Routes>
     </Router>
   );

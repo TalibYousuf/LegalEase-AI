@@ -6,6 +6,7 @@ function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,20 +17,17 @@ function Header() {
       }
     };
 
-    const handleClickOutside = (event) => {
-      if (dropdownOpen && !event.target.closest('.dropdown-container')) {
-        setDropdownOpen(false);
-      }
+    const handleStorage = () => {
+      setIsAuthenticated(!!localStorage.getItem('token'));
     };
 
     window.addEventListener('scroll', handleScroll);
-    document.addEventListener('mousedown', handleClickOutside);
-    
+    window.addEventListener('storage', handleStorage);
     return () => {
       window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('storage', handleStorage);
     };
-  }, [dropdownOpen]);
+  }, []);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -59,65 +57,72 @@ function Header() {
             </ul>
           </nav>
           <div className="hidden md:flex items-center space-x-4">
-            <Link to="/login" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">Login</Link>
-            <Link to="/signup" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">Sign up</Link>
-            <div className="relative dropdown-container">
-              <button onClick={toggleDropdown} className="text-white hover:text-gray-300 text-sm font-medium flex items-center">
-                Menu
-                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-              </button>
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded shadow-lg z-50">
-                  <Link to="/dashboard" className="block px-4 py-2 text-white hover:bg-gray-700" onClick={() => setDropdownOpen(false)}>Dashboard</Link>
-                  <Link to="/summary" className="block px-4 py-2 text-white hover:bg-gray-700" onClick={() => setDropdownOpen(false)}>Summary</Link>
-                  <Link to="/comparison" className="block px-4 py-2 text-white hover:bg-gray-700" onClick={() => setDropdownOpen(false)}>Comparison</Link>
-                  <Link to="/risk-analysis" className="block px-4 py-2 text-white hover:bg-gray-700" onClick={() => setDropdownOpen(false)}>Risk Analysis</Link>
-                  <div className="px-4 py-2 border-t border-gray-700">
-                    <LogoutButton />
-                  </div>
-                </div>
-              )}
-            </div>
-            <Link to="/trial" className="bg-white text-gray-900 hover:bg-gray-100 px-4 py-2 rounded-md text-sm font-medium transition-colors">Start free trial</Link>
-          </div>
-          
-          {/* Mobile menu button */}
-          <button 
-            className="md:hidden text-white focus:outline-none"
-            onClick={toggleMobileMenu}
-            aria-label="Toggle mobile menu"
-          >
-            {mobileMenuOpen ? (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
+            {!isAuthenticated && (
+              <>
+                <Link to="/login" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">Login</Link>
+                <Link to="/signup" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">Sign up</Link>
+              </>
             )}
-          </button>
+            {isAuthenticated && (
+              <div className="relative">
+                <button onClick={toggleDropdown} className="text-white hover:text-gray-300 text-sm font-medium flex items-center" aria-label="Open menu">
+                  {/* Three dots icon */}
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </button>
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded shadow-lg">
+                    <Link to="/dashboard" className="block px-4 py-2 text-white hover:bg-gray-700">Dashboard</Link>
+                    <Link to="/summary" className="block px-4 py-2 text-white hover:bg-gray-700">Summary</Link>
+                    <Link to="/comparison" className="block px-4 py-2 text-white hover:bg-gray-700">Comparison</Link>
+                    <div className="px-4 py-2 border-t border-gray-700"><LogoutButton /></div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+          {/* Removed standalone LogoutButton and Dashboard text link */}
         </div>
+        
+        {/* Mobile menu button */}
+        <button 
+          className="md:hidden text-white focus:outline-none"
+          onClick={toggleMobileMenu}
+          aria-label="Toggle mobile menu"
+        >
+          {mobileMenuOpen ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
+        </button>
       </div>
       
       {/* Mobile menu */}
       <div className={`md:hidden ${mobileMenuOpen ? 'block' : 'hidden'} bg-black bg-opacity-95 shadow-lg`}>
         <div className="px-4 py-3 space-y-1">
-          <Link to="/" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md" onClick={() => setMobileMenuOpen(false)}>Home</Link>
-          <Link to="/services" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md" onClick={() => setMobileMenuOpen(false)}>AI Technology</Link>
-          <Link to="/pricing" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md" onClick={() => setMobileMenuOpen(false)}>Pricing</Link>
-          <Link to="/about" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md" onClick={() => setMobileMenuOpen(false)}>About</Link>
-          <Link to="/login" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md" onClick={() => setMobileMenuOpen(false)}>Login</Link>
-          <Link to="/signup" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md" onClick={() => setMobileMenuOpen(false)}>Sign up</Link>
-          <Link to="/dashboard" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
-          <Link to="/summary" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md" onClick={() => setMobileMenuOpen(false)}>Summary</Link>
-          <Link to="/comparison" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md" onClick={() => setMobileMenuOpen(false)}>Comparison</Link>
-          <Link to="/risk-analysis" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md" onClick={() => setMobileMenuOpen(false)}>Risk Analysis</Link>
-          <div className="px-3 py-2">
-            <LogoutButton />
-          </div>
+          <Link to="/" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Home</Link>
+          <Link to="/services" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">AI Technology</Link>
+          <Link to="/pricing" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Pricing</Link>
+          <Link to="/about" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">About</Link>
+          {!isAuthenticated ? (
+            <>
+              <Link to="/login" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Login</Link>
+              <Link to="/signup" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Sign up</Link>
+            </>
+          ) : (
+            <>
+              <Link to="/dashboard" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Dashboard</Link>
+              <Link to="/summary" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Summary</Link>
+              <Link to="/comparison" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Comparison</Link>
+              <div className="px-3 py-2"><LogoutButton /></div>
+            </>
+          )}
         </div>
       </div>
     </header>

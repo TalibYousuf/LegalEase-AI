@@ -2,7 +2,7 @@
  * API utility functions for making HTTP requests
  */
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:4001/api';
 
 /**
  * Generic fetch wrapper with error handling
@@ -23,7 +23,7 @@ export const fetchApi = async (endpoint, options = {}) => {
     }
     
     // Add authorization header if token exists
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('token');
     if (token) {
       defaultHeaders['Authorization'] = `Bearer ${token}`;
     }

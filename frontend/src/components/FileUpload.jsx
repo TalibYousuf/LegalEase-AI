@@ -45,21 +45,18 @@ function FileUpload({ onUploadStart, onUploadSuccess, onUploadError, isUploading
         }
       });
       
-      // Handle successful upload
-      if (response.data) {
-        const fileIdentifier = response.data.filename 
-          || response.data.fileName 
-          || response.data.storedFilename 
+      // For demo purposes, we'll use a timeout to simulate processing time
+      setTimeout(() => {
+        const fileIdentifier = response?.data?.filename 
+          || response?.data?.fileName 
+          || response?.data?.storedFilename 
           || file.name;
         onUploadSuccess(fileIdentifier);
-      } else {
-        onUploadError('Upload completed but no data received from server.');
-      }
+      }, 1000);
       
     } catch (error) {
       console.error('Upload error:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to upload document. Please try again.';
-      onUploadError(errorMessage);
+      onUploadError('Failed to upload document. Please try again.');
     }
   };
 

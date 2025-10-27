@@ -13,13 +13,31 @@ const uploadsDir = process.env.UPLOADS_DIR
   : path.resolve(__dirname, '../../../uploads');
 
 export const list = (req, res) => {
-  res.json(listDocuments());
+  const all = listDocuments();
+  const userId = req.user?.sub || null;
+  const docs = userId ? all.filter((d) => d.ownerId === userId) : [];
+  res.json(docs);
 };
 
 export const upload = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: 'No file uploaded' });
   }
+  const userId = req.user?.sub;
+  if (!userId) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  const all = listDocuments();
+  const today = new Date();
+  const isSameDay = (d) => {
+    const dt = new Date(d.createdAt);
+    return dt.getFullYear() === today.getFullYear() && dt.getMonth() === today.getMonth() && dt.getDate() === today.getDate();
+  };
+  const todaysUploads = all.filter((d) => d.ownerId === userId && isSameDay(d)).length;
+  if (todaysUploads >= 3) {
+    return res.status(429).json({ message: 'Daily upload limit reached for Free plan (3 per day).' });
+  }
+
   const id = crypto.randomUUID();
   const filePath = path.join(uploadsDir, req.file.filename);
   const text = await readDocumentText(filePath);
@@ -33,6 +51,7 @@ export const upload = async (req, res) => {
     size: req.file.size,
     mimetype: req.file.mimetype,
     summary,
+    ownerId: userId,
   });
 
   upsertDocument(doc);
@@ -41,13 +60,15 @@ export const upload = async (req, res) => {
 
 export const getById = (req, res) => {
   const doc = getDocument(req.params.id);
-  if (!doc) return res.status(404).json({ message: 'Document not found' });
+  const userId = req.user?.sub;
+  if (!doc || (doc.ownerId && doc.ownerId !== userId)) return res.status(404).json({ message: 'Document not found' });
   res.json(doc);
 };
 
 export const generateSummary = async (req, res) => {
   const doc = getDocument(req.params.id);
-  if (!doc) return res.status(404).json({ message: 'Document not found' });
+  const userId = req.user?.sub;
+  if (!doc || (doc.ownerId && doc.ownerId !== userId)) return res.status(404).json({ message: 'Document not found' });
   
   const absolutePath = path.join(uploadsDir, doc.storedFilename);
   const text = await readDocumentText(absolutePath);
@@ -60,17 +81,24 @@ export const generateSummary = async (req, res) => {
       summary = aiSummary;
     }
   } catch (err) {
-    console.warn('AI summary failed, using fallback:', err?.message);
+    console.warn('AI summary failed:', err?.message);
+    // Check if this is a token exhaustion error from OpenAI
+    if (err?.message === 'Error from OpenAI as token finished') {
+      return res.status(429).json({ 
+        message: 'Error from OpenAI as token finished',
+        error: 'openai_token_exhausted'
+      });
+    }
   }
   
   // Fallback to basic summarization if AI fails
   if (!summary) {
     summary = {
-      executiveSummary: summarizeText(text, 5),
+      executiveSummary: summarizeText(text, 8),
       keyTerms: [],
       obligations: [],
       risks: [],
-      recommendations: ['Review this document with legal counsel for complete analysis.']
+      recommendations: []
     };
   }
   
@@ -88,7 +116,18 @@ export const clauses = async (req, res) => {
   const useAI = (req.body?.useAI ?? !!process.env.OPENAI_API_KEY) === true;
   let clauses = null;
   if (useAI) {
-    clauses = await extractClausesAI(text);
+    try {
+      clauses = await extractClausesAI(text);
+    } catch (err) {
+      console.warn('AI clause extraction failed:', err?.message);
+      // Check if this is a token exhaustion error from OpenAI
+      if (err?.message === 'Error from OpenAI as token finished') {
+        return res.status(429).json({ 
+          message: 'Error from OpenAI as token finished',
+          error: 'openai_token_exhausted'
+        });
+      }
+    }
   }
   if (!clauses) {
     // Fallback to heuristics and shape into objects
