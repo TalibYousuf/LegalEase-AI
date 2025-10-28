@@ -5,14 +5,13 @@ function LogoutButton({ className }) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // In a real app, you would clear authentication tokens here
-    // For example: localStorage.removeItem('authToken');
-    
-    // For demonstration purposes, we'll just simulate a logout
-    console.log('User logged out');
-    
-    // Redirect to home page after logout
-    navigate('/');
+    // Clear authentication artifacts
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    // Notify app about auth change
+    window.dispatchEvent(new Event('auth:changed'));
+    // Redirect to login page
+    navigate('/login');
   };
 
   return (

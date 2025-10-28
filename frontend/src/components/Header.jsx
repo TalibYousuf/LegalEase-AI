@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import LogoutButton from './LogoutButton';
 
 function Header() {
@@ -7,6 +7,7 @@ function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,6 +28,18 @@ function Header() {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('storage', handleStorage);
     };
+  }, []);
+
+  // React to route changes by recalculating auth state
+  useEffect(() => {
+    setIsAuthenticated(!!localStorage.getItem('token'));
+  }, [location]);
+
+  // React to custom auth change events (e.g., logout)
+  useEffect(() => {
+    const onAuthChanged = () => setIsAuthenticated(!!localStorage.getItem('token'));
+    window.addEventListener('auth:changed', onAuthChanged);
+    return () => window.removeEventListener('auth:changed', onAuthChanged);
   }, []);
 
   const toggleMobileMenu = () => {
@@ -57,30 +70,33 @@ function Header() {
             </ul>
           </nav>
           <div className="hidden md:flex items-center space-x-4">
-            {!isAuthenticated && (
-              <>
-                <Link to="/login" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">Login</Link>
-                <Link to="/signup" className="text-white hover:text-gray-300 transition-colors text-sm font-medium">Sign up</Link>
-              </>
-            )}
-            {isAuthenticated && (
-              <div className="relative">
-                <button onClick={toggleDropdown} className="text-white hover:text-gray-300 text-sm font-medium flex items-center" aria-label="Open menu">
-                  {/* Three dots icon */}
-                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </button>
-                {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded shadow-lg">
-                    <Link to="/dashboard" className="block px-4 py-2 text-white hover:bg-gray-700">Dashboard</Link>
-                    <Link to="/summary" className="block px-4 py-2 text-white hover:bg-gray-700">Summary</Link>
-                    <Link to="/comparison" className="block px-4 py-2 text-white hover:bg-gray-700">Comparison</Link>
-                    <div className="px-4 py-2 border-t border-gray-700"><LogoutButton /></div>
-                  </div>
-                )}
-              </div>
-            )}
+            <div className="relative">
+              <button onClick={toggleDropdown} className="text-white hover:text-gray-300 text-sm font-medium flex items-center" aria-label="Open menu">
+                {/* Three dots icon */}
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0zm6 0a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded shadow-lg">
+                  {!isAuthenticated ? (
+                    <>
+                      <Link to="/login" className="block px-4 py-2 text-white hover:bg-gray-700">Login</Link>
+                      <Link to="/signup" className="block px-4 py-2 text-white hover:bg-gray-700">Sign up</Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link to="/dashboard" className="block px-4 py-2 text-white hover:bg-gray-700">Dashboard</Link>
+                       <Link to="/summary" className="block px-4 py-2 text-white hover:bg-gray-700">Summary</Link>
+                       <Link to="/comparison" className="block px-4 py-2 text-white hover:bg-gray-700">Comparison</Link>
+                       <Link to="/upload" className="block px-4 py-2 text-white hover:bg-gray-700">Upload Documents</Link>
+                       <Link to="/payment" className="block px-4 py-2 text-white hover:bg-gray-700">Payment</Link>
+                       <div className="px-4 py-2 border-t border-gray-700"><LogoutButton /></div>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
           {/* Removed standalone LogoutButton and Dashboard text link */}
         </div>
@@ -120,6 +136,8 @@ function Header() {
               <Link to="/dashboard" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Dashboard</Link>
               <Link to="/summary" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Summary</Link>
               <Link to="/comparison" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Comparison</Link>
+              <Link to="/upload" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Upload Documents</Link>
+              <Link to="/payment" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Payment</Link>
               <div className="px-3 py-2"><LogoutButton /></div>
             </>
           )}

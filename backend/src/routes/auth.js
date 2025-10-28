@@ -68,4 +68,20 @@ if (isGoogleOAuthConfigured) {
   });
 }
 
+// Dev login endpoint for local testing (issues a JWT)
+router.post('/dev-login', (req, res) => {
+  const { email = '', name = '' } = req.body || {};
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+  const payload = {
+    sub: Buffer.from(email).toString('hex').slice(0, 24), // stable pseudo-id per email
+    name: name || email.split('@')[0],
+    email,
+    provider: 'dev'
+  };
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+  res.json({ token, user: payload });
+});
+
 export default router;

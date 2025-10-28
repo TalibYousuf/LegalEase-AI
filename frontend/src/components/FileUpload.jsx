@@ -1,10 +1,19 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function FileUpload({ onUploadStart, onUploadSuccess, onUploadError, isUploading }) {
   const [file, setFile] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const token = localStorage.getItem('token');
+    setIsAuthenticated(!!token);
+  }, []);
 
   const onDrop = useCallback((acceptedFiles) => {
     if (acceptedFiles.length > 0) {
@@ -28,6 +37,13 @@ function FileUpload({ onUploadStart, onUploadSuccess, onUploadError, isUploading
   const handleUpload = async () => {
     if (!file) return;
     
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      onUploadError('Please login to upload documents');
+      navigate('/login');
+      return;
+    }
+    
     onUploadStart();
     setUploadProgress(0);
     
@@ -35,9 +51,11 @@ function FileUpload({ onUploadStart, onUploadSuccess, onUploadError, isUploading
     formData.append('file', file);
     
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.post('http://localhost:4000/api/documents/upload', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
         },
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / (progressEvent.total || 100));

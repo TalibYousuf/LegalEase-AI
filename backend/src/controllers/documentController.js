@@ -82,13 +82,7 @@ export const generateSummary = async (req, res) => {
     }
   } catch (err) {
     console.warn('AI summary failed:', err?.message);
-    // Check if this is a token exhaustion error from OpenAI
-    if (err?.message === 'Error from OpenAI as token finished') {
-      return res.status(429).json({ 
-        message: 'Error from OpenAI as token finished',
-        error: 'openai_token_exhausted'
-      });
-    }
+    // Previously returned 429 on OpenAI token exhaustion; now we gracefully fallback
   }
   
   // Fallback to basic summarization if AI fails
@@ -120,13 +114,7 @@ export const clauses = async (req, res) => {
       clauses = await extractClausesAI(text);
     } catch (err) {
       console.warn('AI clause extraction failed:', err?.message);
-      // Check if this is a token exhaustion error from OpenAI
-      if (err?.message === 'Error from OpenAI as token finished') {
-        return res.status(429).json({ 
-          message: 'Error from OpenAI as token finished',
-          error: 'openai_token_exhausted'
-        });
-      }
+      // Gracefully continue to heuristics fallback
     }
   }
   if (!clauses) {

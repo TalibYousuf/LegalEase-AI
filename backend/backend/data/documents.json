@@ -305,6 +305,62 @@
         ]
       },
       "ownerId": "110487075961772178303"
+    },
+    "db48eb6f-c6f5-43fe-94a8-3bbf3ed6cdd4": {
+      "id": "db48eb6f-c6f5-43fe-94a8-3bbf3ed6cdd4",
+      "filename": "sample.txt.pdf",
+      "storedFilename": "1761550197996_sample.txt.pdf",
+      "size": 26710,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1761550197996_sample.txt.pdf",
+      "createdAt": "2025-10-27T07:29:58.003Z",
+      "summary": "No text available to summarize.",
+      "ownerId": "68ff1f675842255ea6e80fdc"
+    },
+    "373d4541-13b4-45c2-973f-df3f0425d275": {
+      "id": "373d4541-13b4-45c2-973f-df3f0425d275",
+      "filename": "sample.txt.pdf",
+      "storedFilename": "1761559386638_sample.txt.pdf",
+      "size": 26710,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1761559386638_sample.txt.pdf",
+      "createdAt": "2025-10-27T10:03:06.646Z",
+      "summary": {
+        "executiveSummary": "No text available to summarize.",
+        "keyTerms": [],
+        "obligations": [],
+        "risks": [],
+        "recommendations": []
+      },
+      "ownerId": "74657374406578616d706c65"
+    },
+    "ad980eb6-0607-4eed-9cb8-4910f14cdf2d": {
+      "id": "ad980eb6-0607-4eed-9cb8-4910f14cdf2d",
+      "filename": "sample.txt.pdf",
+      "storedFilename": "1761650223921_sample.txt.pdf",
+      "size": 26710,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1761650223921_sample.txt.pdf",
+      "createdAt": "2025-10-28T11:17:03.929Z",
+      "summary": "No text available to summarize.",
+      "ownerId": "74657374406578616d706c65"
+    },
+    "4ad40567-3973-4040-93c3-7cd552339e04": {
+      "id": "4ad40567-3973-4040-93c3-7cd552339e04",
+      "filename": "Aieman NET .pdf",
+      "storedFilename": "1761650237477_Aieman_NET_.pdf",
+      "size": 150788,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1761650237477_Aieman_NET_.pdf",
+      "createdAt": "2025-10-28T11:17:17.481Z",
+      "summary": {
+        "executiveSummary": "No text available to summarize.",
+        "keyTerms": [],
+        "obligations": [],
+        "risks": [],
+        "recommendations": []
+      },
+      "ownerId": "74657374406578616d706c65"
     }
   }
 }
