@@ -36,8 +36,8 @@ function Pricing() {
         'Priority email support',
         'Up to 5 user accounts'
       ],
-      buttonText: 'Get Started',
-      buttonLink: '/signup',
+      buttonText: isAuthenticated ? 'Subscribe' : 'Get Started',
+      buttonLink: isAuthenticated ? '/payment' : '/signup',
       highlighted: false
     },
     {

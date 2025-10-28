@@ -50,8 +50,10 @@ app.get('/api/health', healthController);
 // Routes
 import documentsRouter from './routes/documents.js';
 import authRouter from './routes/auth.js';
+import paymentRouter from './routes/payment.js';
 app.use('/api/documents', documentsRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/payment', paymentRouter);
 
 // Global error handler
 app.use((err, req, res, next) => {

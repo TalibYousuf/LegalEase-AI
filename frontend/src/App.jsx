@@ -16,6 +16,7 @@ import Summary from './pages/Summary';
 import Comparison from './pages/Comparison';
 import LoginCallback from './pages/LoginCallback';
 import ProtectedRoute from './components/ProtectedRoute';
+import Payment from './pages/Payment';
 
 function App() {
   return (
@@ -53,6 +54,11 @@ function App() {
         <Route path="/comparison" element={
           <ProtectedRoute>
             <Comparison />
+          </ProtectedRoute>
+        } />
+        <Route path="/payment" element={
+          <ProtectedRoute>
+            <Payment />
           </ProtectedRoute>
         } />
       </Routes>
