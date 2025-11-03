@@ -7,7 +7,7 @@ function Payment() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState('monthly');
-  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [paymentMethod, setPaymentMethod] = useState('razorpay');
   const [formData, setFormData] = useState({
     cardNumber: '',
     cardName: '',
@@ -24,6 +24,16 @@ function Payment() {
     } else {
       setIsAuthenticated(true);
     }
+    
+    // Load Razorpay script
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    
+    return () => {
+      document.body.removeChild(script);
+    };
   }, [navigate]);
 
   const handleInputChange = (e) => {
@@ -34,17 +44,109 @@ function Payment() {
     });
   };
 
+  // Function to create Razorpay order
+  const createRazorpayOrder = async () => {
+    try {
+      // Replace with your actual API endpoint
+      const response = await fetch('http://localhost:4001/api/payments/create-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          plan: selectedPlan,
+          amount: selectedPlan === 'monthly' ? 2999 : 29999 // Amount in smallest currency unit (paise)
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create order');
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Error creating order:', error);
+      alert('Could not create payment order. Please try again.');
+      return null;
+    }
+  };
+
+  // Function to open Razorpay payment form
+  const openRazorpayCheckout = (orderData) => {
+    const options = {
+      key: 'YOUR_RAZORPAY_KEY_ID', // Replace with your actual Razorpay key ID
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: 'LegalEase AI',
+      description: `${selectedPlan === 'monthly' ? 'Monthly' : 'Annual'} Subscription`,
+      order_id: orderData.id,
+      handler: function (response) {
+        // Handle successful payment
+        verifyPayment(response);
+      },
+      prefill: {
+        name: formData.cardName || '',
+        email: localStorage.getItem('userEmail') || '',
+      },
+      theme: {
+        color: '#7C3AED' // Purple color matching the UI
+      }
+    };
+    
+    const razorpayInstance = new window.Razorpay(options);
+    razorpayInstance.open();
+  };
+
+  // Function to verify payment with backend
+  const verifyPayment = async (paymentResponse) => {
+    try {
+      const response = await fetch('http://localhost:4001/api/payments/verify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          razorpay_payment_id: paymentResponse.razorpay_payment_id,
+          razorpay_order_id: paymentResponse.razorpay_order_id,
+          razorpay_signature: paymentResponse.razorpay_signature
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        alert('Payment successful! Your subscription is now active.');
+        navigate('/dashboard');
+      } else {
+        alert('Payment verification failed. Please contact support.');
+      }
+    } catch (error) {
+      console.error('Error verifying payment:', error);
+      alert('Payment verification failed. Please contact support.');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     
-    // Simulate payment processing
-    setTimeout(() => {
+    if (paymentMethod === 'razorpay') {
+      const orderData = await createRazorpayOrder();
       setLoading(false);
-      // Show success message and redirect
-      alert('Payment successful! Your subscription is now active.');
-      navigate('/dashboard');
-    }, 1500);
+      
+      if (orderData) {
+        openRazorpayCheckout(orderData);
+      }
+    } else {
+      // Legacy payment processing (simulation)
+      setTimeout(() => {
+        setLoading(false);
+        alert('Payment successful! Your subscription is now active.');
+        navigate('/dashboard');
+      }, 1500);
+    }
   };
 
   const plans = {
@@ -156,13 +258,13 @@ function Payment() {
                   </button>
                   <button
                     className={`flex-1 py-2 px-4 rounded-md ${
-                      paymentMethod === 'paypal' 
+                      paymentMethod === 'razorpay' 
                         ? 'bg-purple-600 text-white' 
                         : 'bg-gray-700 text-gray-300'
                     }`}
-                    onClick={() => setPaymentMethod('paypal')}
+                    onClick={() => setPaymentMethod('razorpay')}
                   >
-                    PayPal
+                    Razorpay
                   </button>
                 </div>
               </div>
@@ -229,31 +331,35 @@ function Payment() {
                     }`}
                     disabled={loading}
                   >
-                    {loading ? 'Processing...' : `Subscribe Now - ${selectedPlan === 'monthly' ? plans.monthly.price : plans.yearly.price}`}
+                    {loading ? 'Processing...' : `Pay ${selectedPlan === 'monthly' ? plans.monthly.price : plans.yearly.price}`}
                   </button>
-                  
-                  <p className="text-sm text-gray-400 mt-4 text-center">
-                    Your payment information is securely processed. We don't store your card details.
-                  </p>
                 </form>
               ) : (
-                <div className="text-center py-6">
-                  <p className="mb-6">You'll be redirected to PayPal to complete your payment.</p>
+                <div>
+                  <p className="text-gray-300 mb-6">
+                    You'll be redirected to Razorpay's secure payment gateway to complete your purchase.
+                  </p>
+                  
                   <button
                     onClick={handleSubmit}
-                    className={`bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 ${
+                    className={`w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 ${
                       loading ? 'opacity-70 cursor-not-allowed' : ''
                     }`}
                     disabled={loading}
                   >
-                    {loading ? 'Processing...' : 'Continue to PayPal'}
+                    {loading ? 'Processing...' : `Pay with Razorpay - ${selectedPlan === 'monthly' ? plans.monthly.price : plans.yearly.price}`}
                   </button>
                 </div>
               )}
+              
+              <div className="mt-6 text-center text-sm text-gray-400">
+                Your payment is secured with industry-standard encryption
+              </div>
             </div>
           </div>
         </div>
       </div>
+      
       <Footer />
     </div>
   );

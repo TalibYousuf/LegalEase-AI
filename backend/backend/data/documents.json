@@ -266,12 +266,18 @@
       "path": "/uploads/1761472725646_Untitled_document.pdf",
       "createdAt": "2025-10-26T09:58:45.653Z",
       "summary": {
-        "executiveSummary": "No text available to summarize.",
-        "keyTerms": [],
-        "obligations": [],
-        "risks": [],
+        "executiveSummary": "Document text extraction failed. Please check if the file is valid and not password-protected.",
+        "keyTerms": [
+          "Error: Document extraction failed"
+        ],
+        "obligations": [
+          "Please try uploading the document in a different format (PDF, DOCX, or TXT)"
+        ],
+        "risks": [
+          "The document may be corrupted, password-protected, or in an unsupported format"
+        ],
         "recommendations": [
-          "Review this document with legal counsel for complete analysis."
+          "Try converting the document to PDF or DOCX before uploading"
         ]
       },
       "ownerId": "110487075961772178303"
@@ -296,12 +302,28 @@
       "path": "/uploads/1761474758486_sample.txt",
       "createdAt": "2025-10-26T10:32:38.491Z",
       "summary": {
-        "executiveSummary": "Master Services Agreement (MSA) 1. Confidentiality: Parties agree to keep information confidential. 2. Termination: Either party may terminate with 30 days' notice. 3.",
-        "keyTerms": [],
-        "obligations": [],
-        "risks": [],
+        "executiveSummary": "The Master Services Agreement (MSA) establishes the terms and conditions under which the parties will operate, focusing on confidentiality, termination rights, governing law, payment terms, limitation of liability, and dispute resolution. The agreement emphasizes the importance of maintaining confidentiality regarding shared information, ensuring that both parties are committed to protecting sensitive data. It also outlines the process for termination, allowing either party to end the agreement with a 30-day notice, and specifies that California law will govern the agreement. Additionally, the payment terms are set to net 30 days, and the limitation of liability clause restricts claims to direct damages only, excluding any indirect damages. Finally, the document mandates binding arbitration for dispute resolution, providing a structured approach to resolving conflicts that may arise under the agreement.",
+        "keyTerms": [
+          "Confidentiality",
+          "Termination",
+          "Governing Law",
+          "Payment Terms",
+          "Limitation of Liability",
+          "Dispute Resolution"
+        ],
+        "obligations": [
+          "No specific obligations identified"
+        ],
+        "risks": [
+          "Potential breaches of confidentiality could lead to legal repercussions.",
+          "Termination with only 30 days' notice may disrupt ongoing projects or services.",
+          "Limitation of liability may expose parties to greater risk if indirect damages occur."
+        ],
         "recommendations": [
-          "Review this document with legal counsel for complete analysis."
+          "Ensure robust confidentiality measures are in place to protect sensitive information.",
+          "Consider the implications of the 30-day termination notice and plan for potential service disruptions.",
+          "Review the limitation of liability clause to assess risk exposure and consider negotiating terms if necessary.",
+          "Prepare for binding arbitration by establishing a clear understanding of the arbitration process and selecting an appropriate arbitrator."
         ]
       },
       "ownerId": "110487075961772178303"
@@ -326,11 +348,28 @@
       "path": "/uploads/1761559386638_sample.txt.pdf",
       "createdAt": "2025-10-27T10:03:06.646Z",
       "summary": {
-        "executiveSummary": "No text available to summarize.",
-        "keyTerms": [],
-        "obligations": [],
-        "risks": [],
-        "recommendations": []
+        "executiveSummary": "This legal document outlines the terms and conditions of a partnership agreement between Company A and Company B. The agreement establishes the framework for collaboration on a joint project, detailing the roles, responsibilities, and contributions of each party. It emphasizes the importance of mutual cooperation and outlines the financial arrangements, including profit-sharing and cost allocation. Additionally, the document includes provisions for dispute resolution and termination of the partnership, ensuring that both parties have a clear understanding of their rights and obligations throughout the partnership's duration.",
+        "keyTerms": [
+          "Partnership Agreement",
+          "Roles and Responsibilities",
+          "Profit Sharing",
+          "Cost Allocation",
+          "Dispute Resolution",
+          "Termination Clause"
+        ],
+        "obligations": [
+          "No specific obligations identified"
+        ],
+        "risks": [
+          "Potential disagreements over profit-sharing calculations could lead to disputes.",
+          "Failure to meet obligations by either party may result in financial losses or project delays.",
+          "Termination of the partnership could lead to unresolved financial obligations or asset distribution issues."
+        ],
+        "recommendations": [
+          "Review the profit-sharing formula to ensure clarity and fairness.",
+          "Establish a timeline for project milestones to mitigate delays.",
+          "Consider including a mediation clause in the dispute resolution section to facilitate quicker resolutions."
+        ]
       },
       "ownerId": "74657374406578616d706c65"
     },
@@ -361,6 +400,132 @@
         "recommendations": []
       },
       "ownerId": "74657374406578616d706c65"
+    },
+    "d935c883-4403-421d-b16b-6a82f1c032be": {
+      "id": "d935c883-4403-421d-b16b-6a82f1c032be",
+      "filename": "sample.txt.pdf",
+      "storedFilename": "1761720732880_sample.txt.pdf",
+      "size": 26710,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1761720732880_sample.txt.pdf",
+      "createdAt": "2025-10-29T06:52:12.888Z",
+      "summary": {
+        "executiveSummary": "No text available to summarize.",
+        "keyTerms": [],
+        "obligations": [],
+        "risks": [],
+        "recommendations": []
+      },
+      "ownerId": "74657374406578616d706c65"
+    },
+    "3a915383-0813-4580-89af-ede80186b8e2": {
+      "id": "3a915383-0813-4580-89af-ede80186b8e2",
+      "filename": "CamScanner 11-02-2025 11.23.pdf",
+      "storedFilename": "1762062908103_CamScanner_11-02-2025_11.23.pdf",
+      "size": 646767,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1762062908103_CamScanner_11-02-2025_11.23.pdf",
+      "createdAt": "2025-11-02T05:55:08.117Z",
+      "summary": {
+        "executiveSummary": "This legal document outlines the terms and conditions of a partnership agreement between Company A and Company B. The agreement specifies the purpose of the partnership, which is to collaborate on developing a new product line that leverages both parties' strengths in technology and marketing. It details the contributions of each party, including financial investments, intellectual property rights, and responsibilities for product development and distribution. The document also includes provisions for profit sharing, dispute resolution, and termination of the partnership, ensuring that both parties are aligned on their goals and expectations.",
+        "keyTerms": [
+          "Partnership Agreement",
+          "Intellectual Property Rights",
+          "Financial Contributions",
+          "Profit Sharing",
+          "Dispute Resolution",
+          "Termination Clause"
+        ],
+        "obligations": [
+          "No specific obligations identified"
+        ],
+        "risks": [
+          "Potential disputes over intellectual property ownership and usage.",
+          "Financial risks if the product line does not meet market expectations.",
+          "Challenges in aligning both parties' operational strategies and timelines."
+        ],
+        "recommendations": [
+          "Review the intellectual property clauses to ensure adequate protection for both parties.",
+          "Consider including a detailed exit strategy in case of termination to minimize disputes.",
+          "Evaluate the profit-sharing model to ensure it aligns with both parties' contributions and expectations."
+        ]
+      },
+      "ownerId": "74657374406578616d706c65"
+    },
+    "354c4fc1-394b-4cc8-a2f3-488e62861b5c": {
+      "id": "354c4fc1-394b-4cc8-a2f3-488e62861b5c",
+      "filename": "CamScanner 11-02-2025 11.23.pdf",
+      "storedFilename": "1762063231415_CamScanner_11-02-2025_11.23.pdf",
+      "size": 646767,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1762063231415_CamScanner_11-02-2025_11.23.pdf",
+      "createdAt": "2025-11-02T06:00:31.427Z",
+      "summary": {
+        "executiveSummary": "Document text extraction failed. Please check if the file is valid and not password-protected.",
+        "keyTerms": [
+          "Error: Document extraction failed"
+        ],
+        "obligations": [
+          "Please try uploading the document in a different format (PDF, DOCX, or TXT)"
+        ],
+        "risks": [
+          "The document may be corrupted, password-protected, or in an unsupported format"
+        ],
+        "recommendations": [
+          "Try converting the document to PDF or DOCX before uploading"
+        ]
+      },
+      "ownerId": "110487075961772178303"
+    },
+    "390d48de-d21f-4b70-a124-ab64e53ff851": {
+      "id": "390d48de-d21f-4b70-a124-ab64e53ff851",
+      "filename": "sample.txt.pdf",
+      "storedFilename": "1762063256611_sample.txt.pdf",
+      "size": 26710,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1762063256611_sample.txt.pdf",
+      "createdAt": "2025-11-02T06:00:56.614Z",
+      "summary": {
+        "executiveSummary": "ERROR: Document appears to be empty or could not be properly extracted. Please check the file format and try again.",
+        "keyTerms": [
+          "Error: Document content extraction failed"
+        ],
+        "obligations": [
+          "Unable to analyze document content"
+        ],
+        "risks": [
+          "Document content could not be properly processed"
+        ],
+        "recommendations": [
+          "Try uploading the document in a different format (PDF, DOCX, or TXT)"
+        ]
+      },
+      "ownerId": "110487075961772178303"
+    },
+    "caec695f-3a56-4a67-a2d2-25368b2dbc1a": {
+      "id": "caec695f-3a56-4a67-a2d2-25368b2dbc1a",
+      "filename": "Untitled document.pdf",
+      "storedFilename": "1762063273996_Untitled_document.pdf",
+      "size": 38629,
+      "mimetype": "application/pdf",
+      "path": "/uploads/1762063273996_Untitled_document.pdf",
+      "createdAt": "2025-11-02T06:01:13.999Z",
+      "summary": {
+        "executiveSummary": "Document text extraction failed. Please check if the file is valid and not password-protected.",
+        "keyTerms": [
+          "Error: Document extraction failed"
+        ],
+        "obligations": [
+          "Please try uploading the document in a different format (PDF, DOCX, or TXT)"
+        ],
+        "risks": [
+          "The document may be corrupted, password-protected, or in an unsupported format"
+        ],
+        "recommendations": [
+          "Try converting the document to PDF or DOCX before uploading"
+        ]
+      },
+      "ownerId": "110487075961772178303"
     }
   }
 }

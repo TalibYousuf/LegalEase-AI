@@ -2,8 +2,19 @@ import OpenAI from 'openai';
 
 export function getOpenAIClient() {
   const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return null;
-  return new OpenAI({ apiKey });
+  console.log("OpenAI API Key available:", apiKey ? "Yes (length: " + apiKey.length + ")" : "No");
+  
+  if (!apiKey) {
+    console.warn('OPENAI_API_KEY not set, using mock AI client');
+    return null;
+  }
+  
+  try {
+    return new OpenAI({ apiKey });
+  } catch (error) {
+    console.error("Error initializing OpenAI client:", error);
+    return null;
+  }
 }
 
 export function getModel() {
@@ -171,23 +182,50 @@ ${clauseText}`;
 // New function for comprehensive document summarization
 export async function generateDocumentSummaryAI(text) {
   const client = getOpenAIClient();
-  if (!client) return null;
+  if (!client) {
+    console.log("No OpenAI client available, returning fallback summary");
+    return {
+      executiveSummary: "[FALLBACK MODE] No OpenAI API key configured. This is a placeholder summary. To get actual AI-powered summaries, please configure your OpenAI API key in the backend .env file.",
+      keyTerms: ["[FALLBACK] API key not configured", "[FALLBACK] Configure OpenAI API key"],
+      obligations: ["[FALLBACK] Set OPENAI_API_KEY in backend/.env"],
+      risks: ["[FALLBACK] Using placeholder data instead of AI analysis"],
+      recommendations: ["[FALLBACK] Add your OpenAI API key to enable AI features"]
+    };
+  }
+  
+  // Ensure we have actual document content to analyze
+  if (!text || text.trim().length < 50) {
+    console.log("Document text is too short or empty:", text);
+    return {
+      executiveSummary: "ERROR: Document appears to be empty or could not be properly extracted. Please check the file format and try again.",
+      keyTerms: ["Error: Document content extraction failed"],
+      obligations: ["Unable to analyze document content"],
+      risks: ["Document content could not be properly processed"],
+      recommendations: ["Try uploading the document in a different format (PDF, DOCX, or TXT)"]
+    };
+  }
+  
+  console.log(`Processing document with ${text.length} characters`);
+  
   const model = getModel();
   
   const system = `You are a legal AI assistant that creates comprehensive summaries of legal documents for business decision-makers.
 
-Return a JSON object with:
-- executiveSummary: A 2-3 paragraph overview of the entire document
-- keyTerms: An array of the most important terms and conditions
-- obligations: What each party is required to do
-- risks: Potential risks or concerns to highlight
-- recommendations: Suggested actions or areas to review with legal counsel`;
+Analyze the EXACT CONTENT of the document provided and create a detailed analysis based ONLY on what's in the document.
 
-  const user = `Create a comprehensive summary of this legal document for business stakeholders:
+Return a JSON object with:
+- executiveSummary: A 2-3 paragraph overview of the entire document, mentioning specific details from the text
+- keyTerms: An array of the most important terms and conditions found in this specific document
+- obligations: What each party is specifically required to do according to this document
+- risks: Potential risks or concerns highlighted in this specific document
+- recommendations: Suggested actions based on the actual content of this document`;
+
+  const user = `Create a comprehensive summary of this legal document based ONLY on its actual content:
 
 ${text.substring(0, 12000)}`; // Limit text to avoid token limits
 
   try {
+    console.log("Making OpenAI API request for document summary...");
     const resp = await client.chat.completions.create({
       model,
       messages: [
@@ -195,24 +233,41 @@ ${text.substring(0, 12000)}`; // Limit text to avoid token limits
         { role: 'user', content: user }
       ],
       response_format: { type: 'json_object' },
-      temperature: 0.3
+      temperature: 0.2, // Lower temperature for more factual analysis
+      max_tokens: 2000 // Ensure we get a complete response
     });
     
     const content = resp.choices?.[0]?.message?.content || '{}';
+    console.log("Received response from OpenAI:", content.substring(0, 100) + "...");
+    
     try { 
-      return JSON.parse(content);
-    } catch { 
-      return null;
+      const parsed = JSON.parse(content);
+      return {
+        executiveSummary: parsed.executiveSummary || "No executive summary available.",
+        keyTerms: Array.isArray(parsed.keyTerms) ? parsed.keyTerms : ["No key terms identified"],
+        obligations: Array.isArray(parsed.obligations) ? parsed.obligations : ["No specific obligations identified"],
+        risks: Array.isArray(parsed.risks) ? parsed.risks : ["No specific risks identified"],
+        recommendations: Array.isArray(parsed.recommendations) ? parsed.recommendations : ["Review with legal counsel"]
+      };
+    } catch (parseErr) { 
+      console.warn('JSON parse error in document summary:', parseErr);
+      return {
+        executiveSummary: "Failed to parse AI response. The document appears to contain legal text.",
+        keyTerms: ["Error parsing response"],
+        obligations: ["Unable to extract obligations"],
+        risks: ["Unable to identify risks"],
+        recommendations: ["Review document manually"]
+      };
     }
   } catch (err) {
     console.warn('OpenAI document summary error:', err?.message || err);
-    // Check for token exhaustion errors
-    if (err?.message?.includes('rate_limit') || 
-        err?.message?.includes('token') || 
-        err?.message?.includes('capacity') ||
-        err?.message?.includes('quota')) {
-      throw new Error('Error from OpenAI as token finished');
-    }
-    return null;
+    // Return a fallback summary instead of throwing an error
+    return {
+      executiveSummary: "Unable to generate AI summary due to an error. The document appears to contain legal text.",
+      keyTerms: ["Error occurred during processing"],
+      obligations: ["Review document manually"],
+      risks: ["Unable to assess risks automatically"],
+      recommendations: ["Consult with legal counsel"]
+    };
   }
 }

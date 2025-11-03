@@ -53,19 +53,17 @@ function Home() {
              </svg>
            </div>
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white">
-            The #1 AI Agent<br />for customer service
+            Legal Document<br />Analysis Made Simple
           </h1>
-          <div className="flex justify-center space-x-4 mb-16">
-            <span className="text-sm text-gray-400">#1 IN PERFORMANCE BENCHMARKS</span>
-            <span className="text-sm text-gray-400">#1 IN COMPETITIVE BAKE-OFFS</span>
-            <span className="text-sm text-gray-400">#1 RANKING ON G2</span>
-          </div>
+          <p className="text-xl text-gray-300 mb-8">
+            Upload your legal documents and get instant AI-powered summaries, risk analysis, and comparisons.
+          </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a href="#upload" className="inline-block bg-white text-black font-medium py-2 px-6 rounded-md hover:bg-gray-100 transition-colors">
-              Start free trial
+            <a href="#upload" className="inline-block bg-purple-600 text-white font-medium py-2 px-6 rounded-md hover:bg-purple-700 transition-colors">
+              Try It Now
             </a>
-            <a href="#features" className="inline-block bg-transparent border border-white text-white font-medium py-2 px-6 rounded-md hover:bg-white hover:bg-opacity-10 transition-colors">
-              View demo
+            <a href="/pricing" className="inline-block bg-transparent border border-white text-white font-medium py-2 px-6 rounded-md hover:bg-white hover:bg-opacity-10 transition-colors">
+              View Pricing
             </a>
           </div>
         </div>
@@ -139,7 +137,35 @@ function Home() {
           How LegalEase AI Helps You
         </h2>
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          {/* Feature cards here */}
+          <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+            <div className="text-purple-500 mb-4">
+              <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Document Summaries</h3>
+            <p className="text-gray-400">Get concise summaries of complex legal documents in seconds, highlighting key terms and obligations.</p>
+          </div>
+          
+          <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+            <div className="text-purple-500 mb-4">
+              <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Risk Analysis</h3>
+            <p className="text-gray-400">Identify potential legal risks and red flags in contracts before signing, with detailed explanations.</p>
+          </div>
+          
+          <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+            <div className="text-purple-500 mb-4">
+              <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Document Comparison</h3>
+            <p className="text-gray-400">Compare multiple versions of contracts to quickly spot changes and understand their implications.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -151,7 +177,26 @@ function Home() {
           What Our Clients Say
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {/* Testimonial cards here */}
+          <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+            <div className="mb-4 text-yellow-400">★★★★★</div>
+            <p className="text-gray-300 mb-4">"LegalEase AI has transformed how our firm handles contract review. What used to take hours now takes minutes."</p>
+            <div className="font-medium">Sarah J.</div>
+            <div className="text-sm text-gray-400">Corporate Attorney</div>
+          </div>
+          
+          <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+            <div className="mb-4 text-yellow-400">★★★★★</div>
+            <p className="text-gray-300 mb-4">"The risk analysis feature has helped us identify critical issues in contracts that we might have otherwise missed."</p>
+            <div className="font-medium">Michael T.</div>
+            <div className="text-sm text-gray-400">Legal Operations Manager</div>
+          </div>
+          
+          <div className="bg-gray-800 p-6 rounded-lg border border-gray-700">
+            <div className="mb-4 text-yellow-400">★★★★★</div>
+            <p className="text-gray-300 mb-4">"Document comparison has been a game-changer for our negotiation process. We can quickly see what's changed between versions."</p>
+            <div className="font-medium">Elena R.</div>
+            <div className="text-sm text-gray-400">In-house Counsel</div>
+          </div>
         </div>
       </div>
     </section>

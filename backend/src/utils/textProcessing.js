@@ -7,22 +7,82 @@ const mammoth = require('mammoth');//for extracting text from docx files
 
 export async function readDocumentText(filePath) {
   try {
+    console.log(`Reading document from: ${filePath}`);
+    
+    if (!fs.existsSync(filePath)) {
+      console.error(`File does not exist: ${filePath}`);
+      return '';
+    }
+    
     const ext = path.extname(filePath).toLowerCase();
+    let text = '';
+    
     if (ext === '.txt' || ext === '.md' || ext === '.csv') {
-      return fs.readFileSync(filePath, 'utf-8');
+      text = fs.readFileSync(filePath, 'utf-8');
     }
-    if (ext === '.pdf') {
+    else if (ext === '.pdf') {
       const dataBuffer = fs.readFileSync(filePath);
-      const data = await pdfParse(dataBuffer);
-      return data.text || '';
+      try {
+        const options = {
+          // Add options to improve text extraction
+          pagerender: function(pageData) {
+            return pageData.getTextContent({normalizeWhitespace: true})
+              .then(function(textContent) {
+                let lastY, text = '';
+                for (let item of textContent.items) {
+                  if (lastY == item.transform[5] || !lastY)
+                    text += item.str;
+                  else
+                    text += '\n' + item.str;
+                  lastY = item.transform[5];
+                }
+                return text;
+              });
+          }
+        };
+        
+        const data = await pdfParse(dataBuffer, options);
+        text = data.text || '';
+        
+        // Special handling for CamScanner and similar apps
+        if (text.length === 0 || (text.includes("CamScanner") && text.trim().split(/\s+/).length < 10)) {
+          console.log("Detected possible CamScanner document with extraction issues, trying alternative method");
+          // Try alternative extraction without custom renderer
+          const basicData = await pdfParse(dataBuffer);
+          text = basicData.text || text;
+        }
+      } catch (pdfError) {
+        console.error("PDF parsing error:", pdfError.message);
+        // Try basic extraction as fallback
+        try {
+          const basicData = await pdfParse(dataBuffer, { max: 5 }); // Try with limited pages
+          text = basicData.text || '';
+        } catch (e) {
+          console.error("Fallback PDF parsing also failed");
+        }
+      }
     }
-    if (ext === '.docx') {
+    else if (ext === '.docx') {
       const result = await mammoth.extractRawText({ path: filePath });
-      return result.value || '';
+      text = result.value || '';
     }
-    // Fallback for unsupported types
-    return fs.readFileSync(filePath, 'utf-8');
+    else {
+      // Fallback for unsupported types
+      try {
+        text = fs.readFileSync(filePath, 'utf-8');
+      } catch (readErr) {
+        console.error(`Failed to read unsupported file type: ${ext}`, readErr);
+      }
+    }
+    
+    console.log(`Extracted ${text.length} characters from document`);
+    if (text.length < 50) {
+      console.warn(`Warning: Extracted text is very short (${text.length} chars)`);
+    }
+    
+    return text;
   } catch (e) {
+    console.error(`Error extracting text from document: ${e.message}`, e);
     return '';
   }
 }

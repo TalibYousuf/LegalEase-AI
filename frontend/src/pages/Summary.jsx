@@ -50,10 +50,19 @@ function Summary() {
       alert('Please select or upload a document first');
       return;
     }
+    if (loading) return; // guard against rapid double-clicks
     setLoading(true);
     try {
       const res = await generateSummary(selectedId);
-      setSummary(res.summary || null);
+      console.log("Summary response:", res); // Debug log
+      
+      // Always set the summary regardless of content
+      setSummary(res?.summary);
+      
+      // Only show alert if summary is completely undefined or null
+      if (res?.summary === undefined || res?.summary === null) {
+        alert('No text available to summarize. If this is a scanned PDF or image-based file, try uploading a text-based PDF, DOCX, or TXT.');
+      }
     } catch (err) {
       console.error('Summary generation failed', err);
       if (err?.error === 'openai_token_exhausted' || err?.message?.includes('token finished')) {

@@ -52,7 +52,7 @@ function FileUpload({ onUploadStart, onUploadSuccess, onUploadError, isUploading
     
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:4000/api/documents/upload', formData, {
+      const response = await axios.post('http://localhost:4001/api/documents/upload', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`

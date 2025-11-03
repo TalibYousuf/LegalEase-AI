@@ -1,8 +1,12 @@
 import { Router } from 'express';
-import { createSubscription, getSubscription, cancelSubscription } from '../controllers/paymentController.js';
+import { createSubscription, getSubscription, cancelSubscription, createOrder, verifyPayment } from '../controllers/paymentController.js';
 import { requireAuth } from '../middleware/auth.js';
 
 const router = Router();
+
+// Razorpay endpoints
+router.post('/create-order', requireAuth, createOrder);
+router.post('/verify', requireAuth, verifyPayment);
 
 // Create a new subscription
 router.post('/subscribe', requireAuth, createSubscription);

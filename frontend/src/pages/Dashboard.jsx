@@ -82,9 +82,9 @@ function Dashboard() {
                 <input type="file" className="hidden" onChange={handleUpload} disabled={uploading || remainingToday === 0} />
                 {uploading ? 'Uploading...' : remainingToday === 0 ? 'Daily Limit Reached' : 'Upload Document'}
               </label>
-              <button className="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded" disabled>
+              <Link to="/summary" className="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded inline-block">
                 New Analysis
-              </button>
+              </Link>
             </div>
           </div>
           

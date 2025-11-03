@@ -89,7 +89,8 @@ function Header() {
                       <Link to="/dashboard" className="block px-4 py-2 text-white hover:bg-gray-700">Dashboard</Link>
                        <Link to="/summary" className="block px-4 py-2 text-white hover:bg-gray-700">Summary</Link>
                        <Link to="/comparison" className="block px-4 py-2 text-white hover:bg-gray-700">Comparison</Link>
-                       <Link to="/upload" className="block px-4 py-2 text-white hover:bg-gray-700">Upload Documents</Link>
+                       {/* Route fix: Upload should go to /summary */}
+                       <Link to="/summary" className="block px-4 py-2 text-white hover:bg-gray-700">Upload Documents</Link>
                        <Link to="/payment" className="block px-4 py-2 text-white hover:bg-gray-700">Payment</Link>
                        <div className="px-4 py-2 border-t border-gray-700"><LogoutButton /></div>
                     </>
@@ -136,7 +137,8 @@ function Header() {
               <Link to="/dashboard" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Dashboard</Link>
               <Link to="/summary" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Summary</Link>
               <Link to="/comparison" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Comparison</Link>
-              <Link to="/upload" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Upload Documents</Link>
+              {/* Route fix: Upload should go to /summary */}
+              <Link to="/summary" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Upload Documents</Link>
               <Link to="/payment" className="block text-white hover:bg-gray-800 px-3 py-2 rounded-md">Payment</Link>
               <div className="px-3 py-2"><LogoutButton /></div>
             </>
